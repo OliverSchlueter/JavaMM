@@ -25,7 +25,7 @@ class LoggerTest {
     }
 
     @Test
-    void log2(){
+     void log2(){
         Logger logger = new Logger(Arrays.asList(LogLevel.DEBUG));
         String logS = logger.log(LoggerTest.class, LogLevel.DEBUG, EXAMPLE_MESSAGE);
         assert logS == null;
