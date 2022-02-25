@@ -14,14 +14,14 @@ public class Logger {
 
     private final List<LogLevel> exclusiveLogLevels;
 
-    private Logger(List<LogLevel> exclusiveLogLevels){
+    public Logger(List<LogLevel> exclusiveLogLevels){
         this.exclusiveLogLevels = exclusiveLogLevels;
     }
 
-    public void log(Class c, LogLevel logLevel, String message){
+    public String log(Class c, LogLevel logLevel, String message){
 
         if(exclusiveLogLevels.contains(logLevel)){
-            return;
+            return null;
         }
 
         Date date = new Date(System.currentTimeMillis());
@@ -39,15 +39,18 @@ public class Logger {
             logPrefix += " [INFO]";
         }
 
-        System.out.println(logPrefix + ": " + message);
+        String finalLog = logPrefix + ": " + message;
+        System.out.println(finalLog);
+
+        return finalLog;
     }
 
-    public void log(LogLevel logLevel, String message){
-        log(null, logLevel, message);
+    public String log(LogLevel logLevel, String message){
+        return log(null, logLevel, message);
     }
 
-    public void log(String message){
-        log(null, null, message);
+    public String log(String message){
+        return log(null, null, message);
     }
 
 
