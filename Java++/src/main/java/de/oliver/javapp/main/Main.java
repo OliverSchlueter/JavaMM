@@ -5,7 +5,9 @@ import de.oliver.logger.Logger;
 
 import java.io.*;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class Main {
 
@@ -24,17 +26,53 @@ public class Main {
                 break;
             }
 
-            // remove whitespaces
-            while(line.contains("  ")){
-                line = line.replace("  ", " ");
+            // line is empty
+            if(line.isEmpty()){
+                continue;
             }
 
-            String[] words = line.split(" ");
-            for (String word : words) {
-                System.out.println("word:'" + word + "'");
+
+            List<Word> words = new ArrayList<>();
+
+            char[] chars = line.toCharArray();
+
+            if(!line.startsWith(" ")){
+                String word = "";
+                for (char c : chars) {
+                    if (c != ' ') {
+                        word += c;
+                    } else {
+                        break;
+                    }
+                }
+
+                words.add(new Word(1, word));
             }
 
-            System.out.println(lineIndex + ":" + line);
+            for (int i = 0; i < chars.length; i++) {
+                char c = chars[i];
+                if(c == ' '){
+                    String word = "";
+                    for (int j = i+1; j < chars.length; j++) {
+                        if(chars[j] != ' '){
+                            word += chars[j];
+                        } else {
+                            break;
+                        }
+                    }
+
+                    if(!word.equals("")){
+                        words.add(new Word(i + 2, word));
+                    }
+                }
+            }
+
+            System.out.println("Line: " + lineIndex);
+
+            for (Word word : words) {
+                System.out.println(word.index() + ":'" + word.value() + "'");
+            }
+
         }
 
     }
