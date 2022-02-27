@@ -1,4 +1,8 @@
-int myInt = 50 + 51
+boolean b = true
+int myInt = 50.8 ** 51
+int m2 = 10 % 2
 char myChar = 'a'
 //string myStr = "hello   world test"
 print(myInt)
+
+myint --

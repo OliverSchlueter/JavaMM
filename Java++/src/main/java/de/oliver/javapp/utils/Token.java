@@ -8,18 +8,43 @@ public enum Token {
     IDENTIFIER(null),
     CALL_FUNCTION(null),
 
+    // Value of a type
+    LONG(null),
     INTEGER(null),
+    DOUBLE(null),
+    FLOAT(null),
     STRING(null),
+    CHARACTER(null),
+    BOOLEAN(null),
 
-    TYPE_INT("int"),
-    TYPE_CHARACTER("char"),
+    // Basic data types
+    TYPE_LONG("long"),
+    TYPE_INTEGER("int"),
+    TYPE_DOUBLE("double"),
+    TYPE_FLOAT("float"),
     TYPE_STRING("string"),
+    TYPE_CHARACTER("char"),
+    TYPE_BOOLEAN("boolean"),
 
-    EQUALS("="),
+    // Arithmetic Operators
     PLUS("+"),
     MINUS("-"),
-    MULTIPLY("*"),
-    DIVIDE("/");
+    STAR("*"), // multiply,
+    DOUBLE_STAR("**"), // exponentiation
+    SLASH("/"), // divide
+    DOUBLE_SLASH("//"), // floor divide
+    PERCENTAGE("%"), // modulo
+
+    //Assignment Operators
+    EQUALS("="),
+    PLUS_EQUALS("+="),
+    MINUS_EQUALS("-="),
+    STAR_EQUALS("*="),
+    SLASH_EQUALS("/="),
+    PLUS_PLUS("++"),
+    MINUS_MINUS("--"),
+
+    ;
 
 
     private final String str;

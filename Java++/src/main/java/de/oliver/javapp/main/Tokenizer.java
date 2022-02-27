@@ -32,10 +32,31 @@ public class Tokenizer {
                     }
                 }
 
+                if(word.value().equals("false") || word.value().equals("true")){
+                    addToken(line, word, Token.BOOLEAN);
+                    continue;
+                }
+
                 if(isInteger(word.value())){
                     addToken(line, word, Token.INTEGER);
                     continue;
                 }
+
+                if(isLong(word.value())){
+                    addToken(line, word, Token.LONG);
+                    continue;
+                }
+
+                if(isFloat(word.value())){
+                    addToken(line, word, Token.FLOAT);
+                    continue;
+                }
+
+                if(isDouble(word.value())){
+                    addToken(line, word, Token.DOUBLE);
+                    continue;
+                }
+
 
                  // TODO: check if there are forbidden symbols in function name
                 if(word.value().contains("(") && word.value().endsWith(")")){
@@ -48,8 +69,8 @@ public class Tokenizer {
                     continue;
                 }
 
-                if(word.value().startsWith("'") && word.value().endsWith("'")){
-                    addToken(line, word, Token.TYPE_CHARACTER);
+                if(word.value().startsWith("'") && word.value().endsWith("'") && word.value().length() == 3){
+                    addToken(line, word, Token.CHARACTER);
                     continue;
                 }
 
@@ -70,13 +91,27 @@ public class Tokenizer {
         return tokens;
     }
 
-    private boolean isInteger(String str){
-        try {
-            Integer.parseInt(str);
-        } catch (NumberFormatException e){
-            return false;
-        }
+    private boolean isLong(String str){
+        try { Long.parseLong(str); }
+        catch (NumberFormatException e){ return false; }
+        return true;
+    }
 
+    private boolean isInteger(String str){
+        try { Integer.parseInt(str); }
+        catch (NumberFormatException e){ return false; }
+        return true;
+    }
+
+    private boolean isDouble(String str){
+        try { Double.parseDouble(str); }
+        catch (NumberFormatException e){ return false; }
+        return true;
+    }
+
+    private boolean isFloat(String str){
+        try { Float.parseFloat(str); }
+        catch (NumberFormatException e){ return false; }
         return true;
     }
 
