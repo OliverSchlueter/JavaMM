@@ -21,6 +21,9 @@ public class Compiler {
         this.words = new HashMap<>();
     }
 
+    /**
+     * Generates ´words´ out of characters in the src-file
+     */
     private void readSrc() {
         BufferedReader br;
         try {
@@ -101,6 +104,9 @@ public class Compiler {
         }
     }
 
+    /**
+     * Simulate the program
+     */
     public void simulate(){
         readSrc();
 
@@ -108,7 +114,7 @@ public class Compiler {
         Map<Integer, LinkedList<KeyValue<Word, Token>>> tokens;
         try {
             tokens = tokenizer.tokenize();
-        } catch (ForbiddenSymbolException e){
+        } catch (NotImplementedException | ForbiddenSymbolException e){
             Logger.logger.log(LogLevel.ERROR, "Tokenizing failed.");
             e.printStackTrace();
             return;
@@ -118,6 +124,9 @@ public class Compiler {
 
     }
 
+    /**
+     * Compiles the program
+     */
     public void compile() throws NotImplementedException {
         throw new NotImplementedException();
     }
