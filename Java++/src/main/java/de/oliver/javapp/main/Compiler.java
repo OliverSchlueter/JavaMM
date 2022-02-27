@@ -46,6 +46,10 @@ public class Compiler {
                 continue;
             }
 
+            // is a comment
+            if(line.startsWith("//")){
+                continue;
+            }
 
             char[] chars = line.toCharArray();
 
