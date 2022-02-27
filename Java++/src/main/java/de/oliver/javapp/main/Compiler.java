@@ -1,5 +1,6 @@
 package de.oliver.javapp.main;
 
+import de.oliver.javapp.exceptions.ForbiddenSymbolException;
 import de.oliver.javapp.exceptions.NotImplementedException;
 import de.oliver.javapp.utils.KeyValue;
 import de.oliver.javapp.utils.Token;
@@ -100,7 +101,14 @@ public class Compiler {
         readSrc();
 
         Tokenizer tokenizer = new Tokenizer(words);
-        Map<Integer, LinkedList<KeyValue<Word, Token>>> tokens = tokenizer.tokenize();
+        Map<Integer, LinkedList<KeyValue<Word, Token>>> tokens;
+        try {
+            tokens = tokenizer.tokenize();
+        } catch (ForbiddenSymbolException e){
+            Logger.logger.log(LogLevel.ERROR, "Tokenizing failed.");
+            e.printStackTrace();
+            return;
+        }
 
         for (Map.Entry<Integer, LinkedList<KeyValue<Word, Token>>> entry : tokens.entrySet()) {
             int line = entry.getKey();

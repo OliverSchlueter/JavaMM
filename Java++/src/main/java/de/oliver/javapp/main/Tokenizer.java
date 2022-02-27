@@ -1,13 +1,11 @@
 package de.oliver.javapp.main;
 
+import de.oliver.javapp.exceptions.ForbiddenSymbolException;
 import de.oliver.javapp.utils.KeyValue;
 import de.oliver.javapp.utils.Token;
 import de.oliver.javapp.utils.Word;
 
-import java.util.AbstractMap;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.Map;
+import java.util.*;
 
 public class Tokenizer {
 
@@ -19,7 +17,7 @@ public class Tokenizer {
         this.tokens = new HashMap<>();
     }
 
-    public Map<Integer, LinkedList<KeyValue<Word, Token>>> tokenize(){
+    public Map<Integer, LinkedList<KeyValue<Word, Token>>> tokenize() throws ForbiddenSymbolException {
 
         for (Map.Entry<Integer, LinkedList<Word>> entry : words.entrySet()) {
             int line = entry.getKey();;
@@ -39,6 +37,7 @@ public class Tokenizer {
                     continue;
                 }
 
+                 // TODO: check if there are forbidden symbols in function name
                 if(word.value().contains("(") && word.value().endsWith(")")){
                     addToken(line, word, Token.CALL_FUNCTION);
                     continue;
@@ -54,6 +53,15 @@ public class Tokenizer {
                     continue;
                 }
 
+                List<String> forbiddenCharsInIdentifier = Arrays.asList(
+                        "\"", "(", ")", "[", "]", "{", "}", "=", "+", "-", "*", "/"
+                );
+
+                for (String s : forbiddenCharsInIdentifier) {
+                    if(word.value().contains(s)){
+                        throw new ForbiddenSymbolException(word, s);
+                    }
+                }
 
                 addToken(line, word, Token.IDENTIFIER);
             }
