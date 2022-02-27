@@ -8,7 +8,7 @@ public class ForbiddenSymbolException extends Exception {
     private final String symbol;
 
     public ForbiddenSymbolException(Word word, String symbol) {
-        super("Forbidden symbol found at [line:" + word.line() + " | column:" + word.column() + "]. Symbol: '" + symbol + "'");
+        super("Forbidden symbol found at " + word.formattedPosition() + ". Symbol: '" + symbol + "'");
         this.word = word;
         this.symbol = symbol;
     }

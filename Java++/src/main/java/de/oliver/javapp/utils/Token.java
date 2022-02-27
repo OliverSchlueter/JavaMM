@@ -26,7 +26,7 @@ public enum Token {
     TYPE_CHARACTER("char"),
     TYPE_BOOLEAN("boolean"),
 
-    // Arithmetic Operators
+    // Arithmetic operators
     PLUS("+"),
     MINUS("-"),
     STAR("*"), // multiply,
@@ -34,16 +34,18 @@ public enum Token {
     SLASH("/"), // divide
     DOUBLE_SLASH("//"), // floor divide
     PERCENTAGE("%"), // modulo
+    PLUS_PLUS("++"), // increment
+    MINUS_MINUS("--"), // decrement
 
-    //Assignment Operators
+    //Assignment operators,
     EQUALS("="),
     PLUS_EQUALS("+="),
     MINUS_EQUALS("-="),
     STAR_EQUALS("*="),
     SLASH_EQUALS("/="),
-    PLUS_PLUS("++"),
-    MINUS_MINUS("--"),
 
+
+    // TODO: add Comparison Operators
     ;
 
 

@@ -114,19 +114,7 @@ public class Compiler {
             return;
         }
 
-        for (Map.Entry<Integer, LinkedList<KeyValue<Word, Token>>> entry : tokens.entrySet()) {
-            int line = entry.getKey();
-            LinkedList<KeyValue<Word, Token>> lineTokens = entry.getValue();
-
-            System.out.println("----- " + line + " -----");
-            for (KeyValue<Word, Token> wordToken : lineTokens) {
-                Word word = wordToken.getKey();
-                Token token = wordToken.getValue();
-
-                System.out.println(word.value() + " : " + token);
-            }
-
-        }
+        tokenizer.printTokens();
 
     }
 
@@ -150,6 +138,22 @@ public class Compiler {
             LinkedList<Word> temp = new LinkedList<>();
             temp.add(word);
             words.put(line, temp);
+        }
+    }
+
+    /**
+     * For debugging
+     */
+    public void printWords(){
+        for (Map.Entry<Integer, LinkedList<Word>> entry : words.entrySet()) {
+            int line = entry.getKey();
+            LinkedList<Word> words = entry.getValue();
+
+            System.out.println("----- " + line + " -----");
+            for (Word word : words) {
+                System.out.println(word.formattedPosition() + ": " + word.value());
+            }
+
         }
     }
 }

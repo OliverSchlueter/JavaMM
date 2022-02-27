@@ -127,4 +127,23 @@ public class Tokenizer {
         }
     }
 
+    /**
+     * For debugging
+     */
+    public void printTokens(){
+        for (Map.Entry<Integer, LinkedList<KeyValue<Word, Token>>> entry : tokens.entrySet()) {
+            int line = entry.getKey();
+            LinkedList<KeyValue<Word, Token>> lineTokens = entry.getValue();
+
+            System.out.println("----- " + line + " -----");
+            for (KeyValue<Word, Token> wordToken : lineTokens) {
+                Word word = wordToken.getKey();
+                Token token = wordToken.getValue();
+
+                System.out.println(word.formattedPosition() + ": " + word.value() + " : " + token);
+            }
+
+        }
+    }
+
 }
