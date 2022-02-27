@@ -8,14 +8,14 @@ public enum Token {
     IDENTIFIER(null),
     CALL_FUNCTION(null),
 
-    // Value of a type
-    LONG(null),
-    INTEGER(null),
-    DOUBLE(null),
-    FLOAT(null),
-    STRING(null),
-    CHARACTER(null),
-    BOOLEAN(null),
+    // Literals
+    LITERAL_LONG(null),
+    LITERAL_INTEGER(null),
+    LITERAL_DOUBLE(null),
+    LITERAL_FLOAT(null),
+    LITERAL_STRING(null),
+    LITERAL_CHARACTER(null),
+    LITERAL_BOOLEAN(null),
 
     // Basic data types
     TYPE_LONG("long"),
@@ -63,6 +63,17 @@ public enum Token {
         List<Token> tokens = new ArrayList<>();
         for (Token t : values()) {
             if(t.getStr() != null){
+                tokens.add(t);
+            }
+        }
+
+        return tokens;
+    }
+
+    public static List<Token> withoutStr(){
+        List<Token> tokens = new ArrayList<>();
+        for (Token t : values()) {
+            if(t.getStr() == null){
                 tokens.add(t);
             }
         }

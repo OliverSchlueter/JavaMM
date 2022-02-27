@@ -1,6 +1,7 @@
 package de.oliver.javapp.main;
 
 import de.oliver.javapp.exceptions.ForbiddenSymbolException;
+import de.oliver.javapp.exceptions.NotImplementedException;
 import de.oliver.javapp.utils.KeyValue;
 import de.oliver.javapp.utils.Token;
 import de.oliver.javapp.utils.Word;
@@ -17,10 +18,10 @@ public class Tokenizer {
         this.tokens = new HashMap<>();
     }
 
-    public Map<Integer, LinkedList<KeyValue<Word, Token>>> tokenize() throws ForbiddenSymbolException {
+    public Map<Integer, LinkedList<KeyValue<Word, Token>>> tokenize() throws ForbiddenSymbolException, NotImplementedException {
 
         for (Map.Entry<Integer, LinkedList<Word>> entry : words.entrySet()) {
-            int line = entry.getKey();;
+            int line = entry.getKey();
             LinkedList<Word> wordList = entry.getValue();
 
             wordLoop:
@@ -32,51 +33,60 @@ public class Tokenizer {
                     }
                 }
 
+                if(Token.withoutStr().size() != 9){
+                    throw new NotImplementedException("One token is not being handled here");
+                }
+
                 if(word.value().equals("false") || word.value().equals("true")){
-                    addToken(line, word, Token.BOOLEAN);
+                    addToken(line, word, Token.LITERAL_BOOLEAN);
                     continue;
                 }
 
                 if(isInteger(word.value())){
-                    addToken(line, word, Token.INTEGER);
+                    addToken(line, word, Token.LITERAL_INTEGER);
                     continue;
                 }
 
                 if(isLong(word.value())){
-                    addToken(line, word, Token.LONG);
+                    addToken(line, word, Token.LITERAL_LONG);
                     continue;
                 }
 
                 if(isFloat(word.value())){
-                    addToken(line, word, Token.FLOAT);
+                    addToken(line, word, Token.LITERAL_FLOAT);
                     continue;
                 }
 
                 if(isDouble(word.value())){
-                    addToken(line, word, Token.DOUBLE);
+                    addToken(line, word, Token.LITERAL_DOUBLE);
                     continue;
                 }
 
+                List<String> forbiddenCharsInIdentifier = Arrays.asList(
+                        "\"", "(", ")", "[", "]", "{", "}", "=", "+", "-", "*", "/", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9"
+                );
 
-                 // TODO: check if there are forbidden symbols in function name
                 if(word.value().contains("(") && word.value().endsWith(")")){
+                    String functionName = word.value().substring(0, word.value().indexOf("("));
+                    for (String s : forbiddenCharsInIdentifier) {
+                        if(functionName.contains(s)){
+                            throw new ForbiddenSymbolException(word, s);
+                        }
+                    }
                     addToken(line, word, Token.CALL_FUNCTION);
                     continue;
                 }
 
                 if(word.value().startsWith("\"") && word.value().endsWith("\"")){
-                    addToken(line, word, Token.STRING);
+                    addToken(line, word, Token.LITERAL_STRING);
                     continue;
                 }
 
                 if(word.value().startsWith("'") && word.value().endsWith("'") && word.value().length() == 3){
-                    addToken(line, word, Token.CHARACTER);
+                    addToken(line, word, Token.LITERAL_CHARACTER);
                     continue;
                 }
 
-                List<String> forbiddenCharsInIdentifier = Arrays.asList(
-                        "\"", "(", ")", "[", "]", "{", "}", "=", "+", "-", "*", "/"
-                );
 
                 for (String s : forbiddenCharsInIdentifier) {
                     if(word.value().contains(s)){
