@@ -1,4 +1,5 @@
-hello   world   !
-i  like java
-
-hi hi moin
+int myInt = 50 + 51
+char myChar = 'a'
+string myStr = "hello   world test"
+string myStr2 = "      "
+print(myInt)
