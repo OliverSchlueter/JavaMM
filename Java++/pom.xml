@@ -38,7 +38,7 @@
                     <archive>
                         <manifest>
                             <addClasspath>true</addClasspath>
-                            <mainClass>de.oliver.javapp.main.Main</mainClass>
+                            <mainClass>de.oliver.javapp.compiler.Main</mainClass>
                         </manifest>
                     </archive>
                 </configuration>

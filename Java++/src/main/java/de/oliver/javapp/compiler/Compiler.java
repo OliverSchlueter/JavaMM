@@ -1,8 +1,10 @@
-package de.oliver.javapp.main;
+package de.oliver.javapp.compiler;
 
+import de.oliver.javapp.compiler.parserUtils.Program;
 import de.oliver.javapp.exceptions.ForbiddenSymbolException;
 import de.oliver.javapp.exceptions.NotImplementedException;
 import de.oliver.javapp.utils.KeyValue;
+import de.oliver.javapp.utils.Node;
 import de.oliver.javapp.utils.Token;
 import de.oliver.javapp.utils.Word;
 import de.oliver.logger.LogLevel;
@@ -88,7 +90,7 @@ public class Compiler {
 
                         if(isString){
                             word += chars[j];
-                            i += j;
+                            i += j-i;
                         } else if (chars[j] != ' ') {
                             word += chars[j];
                         } else {
@@ -108,24 +110,46 @@ public class Compiler {
      * Simulate the program
      */
     public void simulate(){
+        long startTime = System.currentTimeMillis();
+
         readSrc();
+
+        long timeReadSrc = System.currentTimeMillis() - startTime;
+        Logger.logger.log(Compiler.class, LogLevel.INFO, "Reading src took " + timeReadSrc + "ms");
+        long startTimeTokenize = System.currentTimeMillis();
 
         Tokenizer tokenizer = new Tokenizer(words);
         Map<Integer, LinkedList<KeyValue<Word, Token>>> tokens;
         try {
             tokens = tokenizer.tokenize();
         } catch (NotImplementedException | ForbiddenSymbolException e){
-            Logger.logger.log(LogLevel.ERROR, "Tokenizing failed.");
+            Logger.logger.log(Compiler.class, LogLevel.ERROR, "Tokenizing failed.");
             e.printStackTrace();
             return;
         }
 
+        long timeTokenize = System.currentTimeMillis() - startTimeTokenize;
+        Logger.logger.log(Compiler.class, LogLevel.INFO, "Tokenizing took " + timeTokenize + "ms");
+        long startTimeParsing = System.currentTimeMillis();
+
         tokenizer.printTokens();
+
+        Parser parser = new Parser(tokens);
+        Program program = parser.generateProgram();
+
+        long timeParsing = System.currentTimeMillis() - startTimeParsing;
+        Logger.logger.log(Compiler.class, LogLevel.INFO, "Parsing took " + timeParsing + "ms");
+
+        long totalTime = System.currentTimeMillis() - startTime;
+        Logger.logger.log(Compiler.class, LogLevel.INFO, "Generating simulation took " + timeTokenize + "ms\n");
+
+        program.runProgram();
+
 
     }
 
     /**
-     * Compiles the program
+     * Compiles the program into ____
      */
     public void compile() throws NotImplementedException {
         throw new NotImplementedException();
