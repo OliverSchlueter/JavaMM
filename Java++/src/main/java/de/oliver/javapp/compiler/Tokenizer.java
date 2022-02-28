@@ -1,4 +1,4 @@
-package de.oliver.javapp.main;
+package de.oliver.javapp.compiler;
 
 import de.oliver.javapp.exceptions.ForbiddenSymbolException;
 import de.oliver.javapp.exceptions.NotImplementedException;

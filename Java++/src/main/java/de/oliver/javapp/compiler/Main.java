@@ -1,4 +1,4 @@
-package de.oliver.javapp.main;
+package de.oliver.javapp.compiler;
 
 
 public class Main {

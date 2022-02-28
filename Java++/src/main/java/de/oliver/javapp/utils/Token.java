@@ -37,7 +37,10 @@ public enum Token {
     PLUS_PLUS("++"), // increment
     MINUS_MINUS("--"), // decrement
 
-    //Assignment operators,
+    OPEN_PARENTHESIS("("),
+    END_PARENTHESIS(")"),
+
+    //Assignment operators
     EQUALS("="),
     PLUS_EQUALS("+="),
     MINUS_EQUALS("-="),
