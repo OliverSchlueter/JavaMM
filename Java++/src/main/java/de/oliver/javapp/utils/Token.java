@@ -18,6 +18,7 @@ public enum Token {
     LITERAL_BOOLEAN(null),
 
     // Basic data types
+    TYPE_OBJECT("object"),
     TYPE_LONG("long"),
     TYPE_INTEGER("int"),
     TYPE_DOUBLE("double"),
@@ -38,7 +39,8 @@ public enum Token {
     MINUS_MINUS("--"), // decrement
 
     OPEN_PARENTHESIS("("),
-    END_PARENTHESIS(")"),
+    CLOSE_PARENTHESIS(")"),
+    COMMA(","),
 
     //Assignment operators
     EQUALS("="),
@@ -60,6 +62,26 @@ public enum Token {
 
     public String getStr() {
         return str;
+    }
+
+    public static List<Token> basicDataTypes() {
+        List<Token> tokens = new ArrayList<>();
+        for (Token value : values()) {
+            if(value.name().startsWith("TYPE_")){
+                tokens.add(value);
+            }
+        }
+        return tokens;
+    }
+
+    public static List<Token> literals() {
+        List<Token> tokens = new ArrayList<>();
+        for (Token value : values()) {
+            if(value.name().startsWith("LITERAL_")){
+                tokens.add(value);
+            }
+        }
+        return tokens;
     }
 
     public static List<Token> withStr(){

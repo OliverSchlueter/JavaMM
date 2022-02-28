@@ -1,5 +1,6 @@
 package de.oliver.javapp.compiler;
 
+import de.oliver.javapp.compiler.parserUtils.Program;
 import de.oliver.javapp.exceptions.ForbiddenSymbolException;
 import de.oliver.javapp.exceptions.NotImplementedException;
 import de.oliver.javapp.utils.KeyValue;
@@ -89,7 +90,7 @@ public class Compiler {
 
                         if(isString){
                             word += chars[j];
-                            i += j;
+                            i += j-i;
                         } else if (chars[j] != ' ') {
                             word += chars[j];
                         } else {
@@ -129,20 +130,26 @@ public class Compiler {
 
         long timeTokenize = System.currentTimeMillis() - startTimeTokenize;
         Logger.logger.log(Compiler.class, LogLevel.INFO, "Tokenizing took " + timeTokenize + "ms");
+        long startTimeParsing = System.currentTimeMillis();
 
-        //tokenizer.printTokens();
+        tokenizer.printTokens();
 
         Parser parser = new Parser(tokens);
-        Node<Word> ast = parser.parseWhole();
-        ast.print("");
+        Program program = parser.generateProgram();
+
+        long timeParsing = System.currentTimeMillis() - startTimeParsing;
+        Logger.logger.log(Compiler.class, LogLevel.INFO, "Parsing took " + timeParsing + "ms");
 
         long totalTime = System.currentTimeMillis() - startTime;
-        Logger.logger.log(Compiler.class, LogLevel.INFO, "Simulating took " + timeTokenize + "ms");
+        Logger.logger.log(Compiler.class, LogLevel.INFO, "Generating simulation took " + timeTokenize + "ms\n");
+
+        program.runProgram();
+
 
     }
 
     /**
-     * Compiles the program
+     * Compiles the program into ____
      */
     public void compile() throws NotImplementedException {
         throw new NotImplementedException();
