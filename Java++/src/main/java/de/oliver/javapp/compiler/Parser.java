@@ -1,17 +1,14 @@
 package de.oliver.javapp.compiler;
 
 import de.oliver.javapp.compiler.parser.*;
-import de.oliver.javapp.compiler.parser.instructions.AssignVariableInstruction;
-import de.oliver.javapp.compiler.parser.instructions.CallFunctionInstruction;
-import de.oliver.javapp.compiler.parser.instructions.DeclareVariableInstruction;
-import de.oliver.javapp.compiler.parser.instructions.PrintInstruction;
-import de.oliver.javapp.exceptions.InvalidArgumentLengthException;
-import de.oliver.javapp.exceptions.VariableNotFoundException;
+import de.oliver.javapp.compiler.parser.instructions.*;
+import de.oliver.javapp.exceptions.*;
 import de.oliver.javapp.utils.KeyValue;
 import de.oliver.javapp.utils.Token;
 import de.oliver.javapp.utils.Word;
 import de.oliver.logger.LogLevel;
 import de.oliver.logger.Logger;
+import jdk.jshell.EvalException;
 
 import java.util.*;
 
@@ -23,7 +20,7 @@ public class Parser {
         this.tokens = tokens;
     }
 
-    public Program generateProgram() throws VariableNotFoundException, InvalidArgumentLengthException {
+    public Program generateProgram() throws VariableNotFoundException, InvalidArgumentLengthException, FunctionNotFoundException, VariableAlreadyExistsException, InvalidTypeException {
         Program program = new Program();
 
         addDefaultFunctions(program);
@@ -65,7 +62,7 @@ public class Parser {
                     // TODO: do calculating if needed here
                     // for now it just accepts just one variable or literal
                     if (token == Token.IDENTIFIER){
-                        Variable var = program.getVariable(word.value()); //TODO: add VarNotFound exception
+                        Variable var = program.getVariable(word.value());
                         if(var == null){
                             Logger.logger.log(Parser.class, LogLevel.ERROR, "Variable not found: '" + word.value() + "' at " + word.formattedPosition());
                             throw new VariableNotFoundException(word.value());
@@ -87,9 +84,11 @@ public class Parser {
                     && Token.literals().contains(tokens.get(2).getValue())){ // TODO: do calculating if needed here
 
                 String varName = tokens.get(0).getKey().value();
-                Object value = stringToType(tokens.get(2).getKey().value(), Token.TYPE_STRING); //TODO: find matching type here
+                String data = tokens.get(2).getKey().value();
+                Token dataType = Token.getTypeOfLiteral(tokens.get(2).getValue());
+                Object value = stringToType(data, dataType);
 
-                instruction = new AssignVariableInstruction(program, line, varName, value);
+                instruction = new AssignVariableInstruction(program, line, varName, value, dataType);
             }
 
             program.addInstruction(instruction);
@@ -108,6 +107,15 @@ public class Parser {
 
         Function printFunc = new Function("print", printAttr, printInstr);
         program.addFunction(printFunc);
+
+        HashMap<String, Token> printlnAttr = new HashMap<>();
+        printlnAttr.put("message", Token.TYPE_OBJECT);
+
+        LinkedList<Instruction> printlnInstr = new LinkedList<>();
+        printlnInstr.add(new PrintlnInstruction(program, -1));
+
+        Function printlnFunc = new Function("println", printlnAttr, printlnInstr);
+        program.addFunction(printlnFunc);
     }
 
     public Map<Integer, LinkedList<KeyValue<Word, Token>>> getTokens() {
@@ -116,13 +124,13 @@ public class Parser {
 
     private static Object stringToType(String data, Token type){
         switch (type){
-            case TYPE_STRING -> { return data.replace("\"", ""); }
-            case TYPE_BOOLEAN -> { return Boolean.parseBoolean(data); }
-            case TYPE_CHARACTER -> { return data.toCharArray()[1]; }
-            case TYPE_DOUBLE -> { return Double.parseDouble(data); }
-            case TYPE_FLOAT -> { return Float.parseFloat(data); }
-            case TYPE_INTEGER -> { return Integer.parseInt(data); }
-            case TYPE_LONG -> { return Long.parseLong(data); }
+            case TYPE_STRING, LITERAL_STRING -> { return data.replace("\"", ""); }
+            case TYPE_BOOLEAN, LITERAL_BOOLEAN -> { return Boolean.parseBoolean(data); }
+            case TYPE_CHARACTER, LITERAL_CHARACTER -> { return data.toCharArray()[1]; }
+            case TYPE_DOUBLE, LITERAL_DOUBLE -> { return Double.parseDouble(data); }
+            case TYPE_FLOAT, LITERAL_FLOAT -> { return Float.parseFloat(data); }
+            case TYPE_INTEGER, LITERAL_INTEGER -> { return Integer.parseInt(data); }
+            case TYPE_LONG, LITERAL_LONG -> { return Long.parseLong(data); }
         }
 
         return null;

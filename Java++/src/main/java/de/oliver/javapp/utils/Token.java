@@ -84,6 +84,20 @@ public enum Token {
         return tokens;
     }
 
+    public static Token getTypeOfLiteral(Token literal){
+        switch (literal){
+            case LITERAL_STRING -> { return Token.TYPE_STRING; }
+            case LITERAL_BOOLEAN -> { return Token.TYPE_BOOLEAN; }
+            case LITERAL_CHARACTER -> { return Token.TYPE_CHARACTER; }
+            case LITERAL_DOUBLE -> { return Token.TYPE_DOUBLE; }
+            case LITERAL_FLOAT -> { return Token.TYPE_FLOAT; }
+            case LITERAL_LONG -> { return Token.TYPE_LONG; }
+            case LITERAL_INTEGER -> { return Token.TYPE_INTEGER; }
+        }
+
+        return null;
+    }
+
     public static List<Token> withStr(){
         List<Token> tokens = new ArrayList<>();
         for (Token t : values()) {

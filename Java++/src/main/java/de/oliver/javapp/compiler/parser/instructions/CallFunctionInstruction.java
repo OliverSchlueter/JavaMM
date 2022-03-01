@@ -1,8 +1,7 @@
 package de.oliver.javapp.compiler.parser.instructions;
 
 import de.oliver.javapp.compiler.parser.*;
-import de.oliver.javapp.exceptions.InvalidArgumentLengthException;
-import de.oliver.javapp.exceptions.VariableNotFoundException;
+import de.oliver.javapp.exceptions.*;
 
 import java.util.HashMap;
 import java.util.List;
@@ -22,8 +21,12 @@ public class CallFunctionInstruction extends Instruction implements ParameterIns
     }
 
     @Override
-    public void execute() throws InvalidArgumentLengthException, VariableNotFoundException {
+    public void execute() throws InvalidArgumentLengthException, VariableNotFoundException, FunctionNotFoundException, VariableAlreadyExistsException, InvalidTypeException {
         this.function = program.getFunction(functionName);
+
+        if(this.function == null){
+            throw new FunctionNotFoundException(functionName);
+        }
 
         HashMap<String, Variable> params = new HashMap<>();
 
@@ -42,7 +45,7 @@ public class CallFunctionInstruction extends Instruction implements ParameterIns
     }
 
     @Override
-    public void execute(HashMap<String, Variable> parameters) throws InvalidArgumentLengthException, VariableNotFoundException {
+    public void execute(HashMap<String, Variable> parameters) throws InvalidArgumentLengthException, VariableNotFoundException, FunctionNotFoundException, VariableAlreadyExistsException, InvalidTypeException {
         function.run(parameters);
     }
 

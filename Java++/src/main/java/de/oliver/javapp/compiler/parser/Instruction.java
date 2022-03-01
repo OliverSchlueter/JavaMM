@@ -1,7 +1,6 @@
 package de.oliver.javapp.compiler.parser;
 
-import de.oliver.javapp.exceptions.InvalidArgumentLengthException;
-import de.oliver.javapp.exceptions.VariableNotFoundException;
+import de.oliver.javapp.exceptions.*;
 
 public abstract class Instruction {
 
@@ -13,7 +12,7 @@ public abstract class Instruction {
         this.line = line;
     }
 
-    public abstract void execute() throws VariableNotFoundException, InvalidArgumentLengthException;
+    public abstract void execute() throws VariableNotFoundException, InvalidArgumentLengthException, FunctionNotFoundException, VariableAlreadyExistsException, InvalidTypeException;
 
     public int getLine() {
         return line;

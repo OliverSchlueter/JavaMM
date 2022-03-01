@@ -1,10 +1,7 @@
 package de.oliver.javapp.compiler;
 
 import de.oliver.javapp.compiler.parser.Program;
-import de.oliver.javapp.exceptions.ForbiddenSymbolException;
-import de.oliver.javapp.exceptions.InvalidArgumentLengthException;
-import de.oliver.javapp.exceptions.NotImplementedException;
-import de.oliver.javapp.exceptions.VariableNotFoundException;
+import de.oliver.javapp.exceptions.*;
 import de.oliver.javapp.utils.KeyValue;
 import de.oliver.javapp.utils.Token;
 import de.oliver.javapp.utils.Word;
@@ -139,8 +136,8 @@ public class Compiler {
         Program program;
         try {
             program = parser.generateProgram();
-        } catch (VariableNotFoundException | InvalidArgumentLengthException e){
-            Logger.logger.log(Compiler.class, LogLevel.ERROR, "Tokenizing failed.");
+        } catch (VariableNotFoundException | InvalidArgumentLengthException | FunctionNotFoundException | VariableAlreadyExistsException | InvalidTypeException e){
+            Logger.logger.log(Compiler.class, LogLevel.ERROR, "Parsing failed.");
             e.printStackTrace();
             return;
         }
@@ -148,12 +145,12 @@ public class Compiler {
         Logger.logger.log(Compiler.class, LogLevel.INFO, "Parsing took " + timeParsing + "ms");
 
         long totalTime = System.currentTimeMillis() - startTime;
-        Logger.logger.log(Compiler.class, LogLevel.INFO, "Generating simulation took " + timeTokenize + "ms\n");
+        Logger.logger.log(Compiler.class, LogLevel.INFO, "Generating simulation took " + totalTime + "ms\n");
 
         try {
             program.runProgram();
-        } catch (VariableNotFoundException | InvalidArgumentLengthException e){
-            Logger.logger.log(Compiler.class, LogLevel.ERROR, "Tokenizing failed.");
+        } catch (VariableNotFoundException | InvalidArgumentLengthException | FunctionNotFoundException | VariableAlreadyExistsException | InvalidTypeException e){
+            Logger.logger.log(Compiler.class, LogLevel.ERROR, "Executing failed.");
             e.printStackTrace();
             return;
         }

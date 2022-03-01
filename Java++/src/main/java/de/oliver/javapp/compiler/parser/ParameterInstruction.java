@@ -1,12 +1,11 @@
 package de.oliver.javapp.compiler.parser;
 
-import de.oliver.javapp.exceptions.InvalidArgumentLengthException;
-import de.oliver.javapp.exceptions.VariableNotFoundException;
+import de.oliver.javapp.exceptions.*;
 
 import java.util.HashMap;
 
 public interface ParameterInstruction {
 
-    public void execute(HashMap<String, Variable> parameters) throws InvalidArgumentLengthException, VariableNotFoundException;
+    public void execute(HashMap<String, Variable> parameters) throws InvalidArgumentLengthException, VariableNotFoundException, FunctionNotFoundException, VariableAlreadyExistsException, InvalidTypeException;
 
 }
