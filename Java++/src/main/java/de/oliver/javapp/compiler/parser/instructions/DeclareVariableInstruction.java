@@ -1,9 +1,12 @@
-package de.oliver.javapp.compiler.parserUtils;
+package de.oliver.javapp.compiler.parser.instructions;
 
+import de.oliver.javapp.compiler.parser.Instruction;
+import de.oliver.javapp.compiler.parser.Program;
+import de.oliver.javapp.compiler.parser.Variable;
 import de.oliver.javapp.utils.Token;
 import de.oliver.javapp.utils.Word;
 
-public class DeclareVariableInstruction extends Instruction{
+public class DeclareVariableInstruction extends Instruction {
 
     private final Word identifier;
     private final Token type;

@@ -1,9 +1,13 @@
-package de.oliver.javapp.compiler.parserUtils;
+package de.oliver.javapp.compiler.parser.instructions;
+
+import de.oliver.javapp.compiler.parser.*;
+import de.oliver.javapp.exceptions.InvalidArgumentLengthException;
+import de.oliver.javapp.exceptions.VariableNotFoundException;
 
 import java.util.HashMap;
 import java.util.List;
 
-public class CallFunctionInstruction extends Instruction implements ParameterInstruction{
+public class CallFunctionInstruction extends Instruction implements ParameterInstruction {
 
     private final String functionName;
     private final List<Variable> parametersVars;
@@ -18,7 +22,7 @@ public class CallFunctionInstruction extends Instruction implements ParameterIns
     }
 
     @Override
-    public void execute() {
+    public void execute() throws InvalidArgumentLengthException, VariableNotFoundException {
         this.function = program.getFunction(functionName);
 
         HashMap<String, Variable> params = new HashMap<>();
@@ -27,7 +31,7 @@ public class CallFunctionInstruction extends Instruction implements ParameterIns
         int parameterSize = parametersVars.size();
 
         if (parameterSize != attributeSize) {
-            //TODO: invalid argument length exception
+            throw new InvalidArgumentLengthException(attributeSize, parameterSize);
         }
 
         for (int i = 0; i < attributeSize; i++) {
@@ -38,7 +42,7 @@ public class CallFunctionInstruction extends Instruction implements ParameterIns
     }
 
     @Override
-    public void execute(HashMap<String, Variable> parameters) {
+    public void execute(HashMap<String, Variable> parameters) throws InvalidArgumentLengthException, VariableNotFoundException {
         function.run(parameters);
     }
 

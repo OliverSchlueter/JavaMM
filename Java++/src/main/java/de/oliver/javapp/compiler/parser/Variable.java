@@ -1,4 +1,4 @@
-package de.oliver.javapp.compiler.parserUtils;
+package de.oliver.javapp.compiler.parser;
 
 import de.oliver.javapp.utils.Token;
 

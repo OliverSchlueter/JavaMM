@@ -1,5 +1,7 @@
-package de.oliver.javapp.compiler.parserUtils;
+package de.oliver.javapp.compiler.parser;
 
+import de.oliver.javapp.exceptions.InvalidArgumentLengthException;
+import de.oliver.javapp.exceptions.VariableNotFoundException;
 import de.oliver.javapp.utils.Token;
 
 import java.util.HashMap;
@@ -21,7 +23,7 @@ public class Function {
      * @param parameters key: attribute name
      *                   value: variable
      */
-    public void run(HashMap<String, Variable> parameters){
+    public void run(HashMap<String, Variable> parameters) throws InvalidArgumentLengthException, VariableNotFoundException {
         for (Instruction instruction : instructions) {
             if(instruction instanceof ParameterInstruction pInstr){
                 pInstr.execute(parameters);

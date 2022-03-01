@@ -1,10 +1,11 @@
 package de.oliver.javapp.compiler;
 
-import de.oliver.javapp.compiler.parserUtils.Program;
+import de.oliver.javapp.compiler.parser.Program;
 import de.oliver.javapp.exceptions.ForbiddenSymbolException;
+import de.oliver.javapp.exceptions.InvalidArgumentLengthException;
 import de.oliver.javapp.exceptions.NotImplementedException;
+import de.oliver.javapp.exceptions.VariableNotFoundException;
 import de.oliver.javapp.utils.KeyValue;
-import de.oliver.javapp.utils.Node;
 import de.oliver.javapp.utils.Token;
 import de.oliver.javapp.utils.Word;
 import de.oliver.logger.LogLevel;
@@ -109,7 +110,7 @@ public class Compiler {
     /**
      * Simulate the program
      */
-    public void simulate(){
+    public void simulate() {
         long startTime = System.currentTimeMillis();
 
         readSrc();
@@ -135,16 +136,27 @@ public class Compiler {
         tokenizer.printTokens();
 
         Parser parser = new Parser(tokens);
-        Program program = parser.generateProgram();
-
+        Program program;
+        try {
+            program = parser.generateProgram();
+        } catch (VariableNotFoundException | InvalidArgumentLengthException e){
+            Logger.logger.log(Compiler.class, LogLevel.ERROR, "Tokenizing failed.");
+            e.printStackTrace();
+            return;
+        }
         long timeParsing = System.currentTimeMillis() - startTimeParsing;
         Logger.logger.log(Compiler.class, LogLevel.INFO, "Parsing took " + timeParsing + "ms");
 
         long totalTime = System.currentTimeMillis() - startTime;
         Logger.logger.log(Compiler.class, LogLevel.INFO, "Generating simulation took " + timeTokenize + "ms\n");
 
-        program.runProgram();
-
+        try {
+            program.runProgram();
+        } catch (VariableNotFoundException | InvalidArgumentLengthException e){
+            Logger.logger.log(Compiler.class, LogLevel.ERROR, "Tokenizing failed.");
+            e.printStackTrace();
+            return;
+        }
 
     }
 

@@ -1,6 +1,8 @@
-package de.oliver.javapp.compiler.parserUtils;
+package de.oliver.javapp.compiler.parser;
 
 
+import de.oliver.javapp.exceptions.InvalidArgumentLengthException;
+import de.oliver.javapp.exceptions.VariableNotFoundException;
 import de.oliver.logger.LogLevel;
 import de.oliver.logger.Logger;
 
@@ -28,7 +30,7 @@ public class Program {
     /**
      * run the entire program
      */
-    public void runProgram(){
+    public void runProgram() throws InvalidArgumentLengthException, VariableNotFoundException {
         Logger.logger.log(Program.class, LogLevel.INFO, "Running program now");
         for (Instruction instruction : instructions) {
             instruction.execute();
@@ -67,7 +69,6 @@ public class Program {
         if(variables.containsKey(name)){
             return variables.get(name);
         } else {
-            //TODO: variable not found
             return null;
         }
     }

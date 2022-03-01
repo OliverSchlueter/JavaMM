@@ -1,6 +1,12 @@
 package de.oliver.javapp.compiler;
 
-import de.oliver.javapp.compiler.parserUtils.*;
+import de.oliver.javapp.compiler.parser.*;
+import de.oliver.javapp.compiler.parser.instructions.AssignVariableInstruction;
+import de.oliver.javapp.compiler.parser.instructions.CallFunctionInstruction;
+import de.oliver.javapp.compiler.parser.instructions.DeclareVariableInstruction;
+import de.oliver.javapp.compiler.parser.instructions.PrintInstruction;
+import de.oliver.javapp.exceptions.InvalidArgumentLengthException;
+import de.oliver.javapp.exceptions.VariableNotFoundException;
 import de.oliver.javapp.utils.KeyValue;
 import de.oliver.javapp.utils.Token;
 import de.oliver.javapp.utils.Word;
@@ -17,7 +23,7 @@ public class Parser {
         this.tokens = tokens;
     }
 
-    public Program generateProgram(){
+    public Program generateProgram() throws VariableNotFoundException, InvalidArgumentLengthException {
         Program program = new Program();
 
         addDefaultFunctions(program);
@@ -62,6 +68,7 @@ public class Parser {
                         Variable var = program.getVariable(word.value()); //TODO: add VarNotFound exception
                         if(var == null){
                             Logger.logger.log(Parser.class, LogLevel.ERROR, "Variable not found: '" + word.value() + "' at " + word.formattedPosition());
+                            throw new VariableNotFoundException(word.value());
                         }
 
                         parameters.add(var);
