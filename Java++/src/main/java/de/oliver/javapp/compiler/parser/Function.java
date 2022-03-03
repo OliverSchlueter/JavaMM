@@ -8,6 +8,8 @@ import java.util.LinkedList;
 
 public class Function {
 
+    //TODO: add return value for function
+
     private final String name;
     private final HashMap<String, Token> attributes; // attribute name, type
     private final LinkedList<Instruction> instructions;

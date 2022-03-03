@@ -70,7 +70,7 @@ public class Parser {
 
                         parameters.add(var);
                     } else if(Token.literals().contains(token)){
-                        Variable var = new Variable(null, Token.TYPE_OBJECT, word.value());
+                        Variable var = new Variable(null, Token.getTypeOfLiteral(token), word.value()); //TODO: find correct type for literal
                         parameters.add(var);
                     }
                 }
@@ -99,6 +99,7 @@ public class Parser {
 
 
     public void addDefaultFunctions(Program program){
+        // PRINT
         HashMap<String, Token> printAttr = new HashMap<>();
         printAttr.put("message", Token.TYPE_OBJECT);
 
@@ -108,6 +109,7 @@ public class Parser {
         Function printFunc = new Function("print", printAttr, printInstr);
         program.addFunction(printFunc);
 
+        //PRINTLN
         HashMap<String, Token> printlnAttr = new HashMap<>();
         printlnAttr.put("message", Token.TYPE_OBJECT);
 
@@ -116,6 +118,16 @@ public class Parser {
 
         Function printlnFunc = new Function("println", printlnAttr, printlnInstr);
         program.addFunction(printlnFunc);
+
+        //DUMP
+        HashMap<String, Token> dumpAttr = new HashMap<>();
+        dumpAttr.put("type", Token.TYPE_STRING);
+
+        LinkedList<Instruction> dumpInstr = new LinkedList<>();
+        dumpInstr.add(new DumpInstruction(program, -1));
+
+        Function dumpFunc = new Function("dump", dumpAttr, dumpInstr);
+        program.addFunction(dumpFunc);
     }
 
     public Map<Integer, LinkedList<KeyValue<Word, Token>>> getTokens() {

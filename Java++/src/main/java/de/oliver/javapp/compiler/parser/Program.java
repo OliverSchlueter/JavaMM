@@ -2,11 +2,13 @@ package de.oliver.javapp.compiler.parser;
 
 
 import de.oliver.javapp.exceptions.*;
+import de.oliver.javapp.utils.Token;
 import de.oliver.logger.LogLevel;
 import de.oliver.logger.Logger;
 
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.Map;
 
 public class Program {
 
@@ -79,6 +81,36 @@ public class Program {
         variables.put(variable.getName(), variable);
     }
 
+    public void dumpVariables(){
+        System.out.println("--------------------------");
+        System.out.println("| Variables in program");
+        System.out.println("| ");
+        System.out.println("| <TYPE> <NAME> = <VALUE>");
+        System.out.println("| ");
+        for (Variable variable : variables.values()) {
+            System.out.println("| " + variable.getType() + " " + variable.getName() + " = " + variable.getValue().toString());
+        }
+        System.out.println("--------------------------");
+    }
+
+    public void dumpFunctions(){
+        System.out.println("--------------------------");
+        System.out.println("| Functions in program");
+        System.out.println("| ");
+        System.out.println("| <RETURN TYPE> <NAME> <ATTRIBUTES>");
+        System.out.println("| ");
+        for (Function function : functions.values()) {
+            String name = function.getName();
+            String attr = "";
+            for (Map.Entry<String, Token> entry : function.getAttributes().entrySet()) {
+                attr += entry.getValue() + " " + entry.getKey() + ", ";
+            }
+            attr = attr.substring(0, attr.length()-2);
+            System.out.println("| void " + name + " (" + attr + ")"); // TODO: add return value if implemented
+        }
+        System.out.println("--------------------------");
+    }
+
     public HashMap<String, Function> getFunctions() {
         return functions;
     }
@@ -98,7 +130,6 @@ public class Program {
         if(functions.containsKey(name)){
             return functions.get(name);
         } else {
-            //TODO: function not found
             return null;
         }
     }

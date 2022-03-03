@@ -29,7 +29,7 @@ public class AssignVariableInstruction extends Instruction {
         }
 
         if(var.getType() != valueType){
-            throw new InvalidTypeException(var, valueType);
+            throw new InvalidTypeException(var, line, valueType);
         }
 
         var.setValue(value);
