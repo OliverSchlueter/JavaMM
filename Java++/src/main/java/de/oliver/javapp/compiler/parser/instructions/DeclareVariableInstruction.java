@@ -28,6 +28,8 @@ public class DeclareVariableInstruction extends Instruction {
             throw new VariableAlreadyExistsException(identifier.value());
         }
 
+        // TODO: check if actual value is matching type
+
         program.addVariable(var);
     }
 

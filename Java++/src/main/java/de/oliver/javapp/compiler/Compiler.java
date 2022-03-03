@@ -35,6 +35,8 @@ public class Compiler {
 
         String line = null;
         int lineIndex = 0;
+
+        lineLoop:
         while(true) {
             try { line = br.readLine(); } catch (IOException ignored) { }
             lineIndex++;
@@ -58,14 +60,16 @@ public class Compiler {
 
             if (!line.startsWith(" ")) {
                 String word = "";
-                for (char c : chars) {
+
+                for (int i = 0; i < chars.length; i++) {
+                    char c = chars[i];
+
                     if (c != ' ') {
                         word += c;
                     } else {
                         break;
                     }
                 }
-
 
                 addWordToLine(lineIndex, new Word(lineIndex, 1, word));
             }
