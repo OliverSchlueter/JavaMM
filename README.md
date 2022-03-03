@@ -1,7 +1,7 @@
-## Java++
+# Java++
 Java++ is a programming language based on Java
 
-# Rules
+## Rules
 - Space between Operations
 - New line for each instruduction
 - For calling a function: no space before '(' and no space between attributes
