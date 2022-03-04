@@ -133,12 +133,34 @@ public class Parser {
             }
         }
 
+
         for (int i = 0; i < wordTokens.size(); i++) {
             Word word = wordTokens.get(i).getKey();
             Token token = wordTokens.get(i).getValue();
 
             // is operator
             if(Token.arithmeticOperators().contains(token)){
+
+                if(token == Token.STAR || token == Token.SLASH){
+                    KeyValue<Word, Token> left = wordTokens.get(i-1);
+                    if(wordTokens.size() < i+1){
+                        throw new NullPointerException("No value after operator at: " + word.formattedPosition());
+                    }
+                    KeyValue<Word, Token> right = wordTokens.get(i+1);
+
+                    Node<KeyValue<Word, Token>> newChild = new Node<>(wordTokens.get(i))
+                                                        .addChild(new Node<>(left))
+                                                        .addChild(new Node<>(right));
+
+                    
+                    Node<KeyValue<Word, Token>> lastRight = root.getLastRight();
+
+
+                    lastRight.getChildren().remove(1);
+                    lastRight.addChild(newChild);
+
+                    continue;
+                }
 
                 if(root == null){
                     root = new Node<>(wordTokens.get(i))
