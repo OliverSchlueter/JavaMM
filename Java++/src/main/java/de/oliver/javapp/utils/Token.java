@@ -1,6 +1,8 @@
 package de.oliver.javapp.utils;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public enum Token {
@@ -72,6 +74,10 @@ public enum Token {
             }
         }
         return tokens;
+    }
+
+    public static List<Token> arithmeticOperators(){
+        return Arrays.asList(PLUS, MINUS, STAR, SLASH);
     }
 
     public static List<Token> literals() {

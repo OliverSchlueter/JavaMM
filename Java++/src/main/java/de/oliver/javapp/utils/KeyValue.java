@@ -17,4 +17,12 @@ public class KeyValue<T, V> {
     public V getValue() {
         return value;
     }
+
+    @Override
+    public String toString() {
+        return "KeyValue{" +
+                "key=" + key +
+                ", value=" + value +
+                '}';
+    }
 }

@@ -4,6 +4,7 @@ import de.oliver.javapp.compiler.parser.*;
 import de.oliver.javapp.compiler.parser.instructions.*;
 import de.oliver.javapp.exceptions.*;
 import de.oliver.javapp.utils.KeyValue;
+import de.oliver.javapp.utils.Node;
 import de.oliver.javapp.utils.Token;
 import de.oliver.javapp.utils.Word;
 import de.oliver.logger.LogLevel;
@@ -35,13 +36,20 @@ public class Parser {
             if(Token.basicDataTypes().contains(tokens.get(0).getValue())
                     && tokens.get(1).getValue() == Token.IDENTIFIER
                     && tokens.get(2).getValue() == Token.EQUALS
-                    && Token.literals().contains(tokens.get(3).getValue())){ // or is another var
+                    && tokens.size() >= 4){
 
-                // TODO: add calculating here
                 // TODO: type checking
                 Token type = tokens.get(0).getValue();
                 Word identifier = tokens.get(1).getKey();
                 Object value = stringToType(tokens.get(3).getKey().value(), type);
+
+                LinkedList<KeyValue<Word, Token>> subWordTokens = new LinkedList<>();
+                for (int i = 3; i < tokens.size(); i++) {
+                    subWordTokens.add(tokens.get(i));
+                }
+                Node<KeyValue<Word, Token>> n = valueOfCalculation(type, subWordTokens);
+                n.print("");
+
                 instruction = new DeclareVariableInstruction(program, line, identifier, type, value);
                 instruction.execute();
                 instruction = null;
@@ -95,6 +103,58 @@ public class Parser {
         }
 
         return program;
+    }
+
+    public Node<KeyValue<Word, Token>> valueOfCalculation(Token type, LinkedList<KeyValue<Word, Token>> wordTokens){
+        Node<KeyValue<Word, Token>> root = null;
+
+        if(wordTokens.size() == 1){
+            root = new Node<>(wordTokens.get(0));
+            return root;
+        }
+
+        // TODO: only support for numbers at the moment
+
+        if(wordTokens.size() == 3){
+            if(Token.arithmeticOperators().contains(wordTokens.get(1).getValue())){
+                KeyValue<Word, Token> left = wordTokens.get(0);
+                KeyValue<Word, Token> operator = wordTokens.get(1);
+                KeyValue<Word, Token> right = wordTokens.get(2);
+
+                if(!Token.arithmeticOperators().contains(operator.getValue())){
+                    // TODO: invalid operator
+                    return null;
+                }
+
+                root = new Node<>(operator, Arrays.asList(
+                        new Node<>(left),
+                        new Node<>(right)));
+            return root;
+            }
+        }
+
+        for (int i = 0; i < wordTokens.size(); i++) {
+            Word word = wordTokens.get(i).getKey();
+            Token token = wordTokens.get(i).getValue();
+
+            // is operator
+            if(Token.arithmeticOperators().contains(token)){
+
+                if(root == null){
+                    root = new Node<>(wordTokens.get(i))
+                            .addChild(new Node<>(wordTokens.get(i-1)))
+                            .addChild(new Node<>(wordTokens.get(i+1)));
+                } else {
+                    Node<KeyValue<Word, Token>> current = root.clone();
+                    root = new Node<>(wordTokens.get(i))
+                            .addChild(current)
+                            .addChild(new Node<>(wordTokens.get(i+1)));
+                }
+            }
+
+        }
+
+        return root;
     }
 
 

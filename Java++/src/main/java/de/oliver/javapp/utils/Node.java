@@ -39,4 +39,12 @@ public class Node<T> {
     public List<Node<T>> getChildren() {
         return children;
     }
+
+    public Node<T> clone(){
+        Node<T> newNode = new Node<>(data);
+        for (Node<T> child : children) {
+            newNode.addChild(child.clone());
+        }
+        return newNode;
+    }
 }
