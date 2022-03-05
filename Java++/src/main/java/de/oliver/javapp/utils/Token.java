@@ -1,6 +1,5 @@
 package de.oliver.javapp.utils;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -8,7 +7,7 @@ import java.util.List;
 public enum Token {
 
     IDENTIFIER(null),
-    CALL_FUNCTION(null),
+    //CALL_FUNCTION(null),
 
     // Literals
     LITERAL_LONG(null),
@@ -33,12 +32,12 @@ public enum Token {
     PLUS("+"),
     MINUS("-"),
     STAR("*"), // multiply,
-    DOUBLE_STAR("**"), // exponentiation
     SLASH("/"), // divide
-    DOUBLE_SLASH("//"), // floor divide
-    PERCENTAGE("%"), // modulo
-    PLUS_PLUS("++"), // increment
-    MINUS_MINUS("--"), // decrement
+    DOUBLE_STAR("**"), // exponentiation TODO: not implement
+    DOUBLE_SLASH("//"), // floor divide TODO: not implement
+    PERCENTAGE("%"), // modulo TODO: not implement
+    PLUS_PLUS("++"), // increment TODO: not implement
+    MINUS_MINUS("--"), // decrement TODO: not implement
 
     OPEN_PARENTHESIS("("),
     CLOSE_PARENTHESIS(")"),
@@ -46,10 +45,10 @@ public enum Token {
 
     //Assignment operators
     EQUALS("="),
-    PLUS_EQUALS("+="),
-    MINUS_EQUALS("-="),
-    STAR_EQUALS("*="),
-    SLASH_EQUALS("/="),
+    PLUS_EQUALS("+="), // TODO: not implement
+    MINUS_EQUALS("-="), // TODO: not implement
+    STAR_EQUALS("*="), // TODO: not implement
+    SLASH_EQUALS("/="), // TODO: not implement
 
 
     // TODO: add Comparison Operators

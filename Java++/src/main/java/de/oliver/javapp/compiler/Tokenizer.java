@@ -33,7 +33,7 @@ public class Tokenizer {
                     }
                 }
 
-                if(Token.withoutStr().size() != 9){
+                if(Token.withoutStr().size() != 8){
                     throw new NotImplementedException("One token is not being handled here");
                 }
 
@@ -66,7 +66,8 @@ public class Tokenizer {
                         "\"", "(", ")", "[", "]", "{", "}", "=", "+", "-", "*", "/", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9"
                 );
 
-                if(word.value().contains("(") && word.value().endsWith(")")){
+                // deprecated
+                /*if(word.value().contains("(") && word.value().endsWith(")")){
                     String functionName = word.value().substring(0, word.value().indexOf("("));
                     for (String s : forbiddenCharsInIdentifier) {
                         if(functionName.contains(s)){
@@ -75,7 +76,7 @@ public class Tokenizer {
                     }
                     addToken(line, word, Token.CALL_FUNCTION);
                     continue;
-                }
+                }*/
 
                 if(word.value().startsWith("\"") && word.value().endsWith("\"")){
                     addToken(line, word, Token.LITERAL_STRING);

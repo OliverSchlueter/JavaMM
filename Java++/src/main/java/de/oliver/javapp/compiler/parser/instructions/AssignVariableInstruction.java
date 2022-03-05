@@ -28,7 +28,7 @@ public class AssignVariableInstruction extends Instruction {
             throw new VariableNotFoundException(variableName);
         }
 
-        if(var.getType() != valueType){
+        if(var.getType() != valueType && valueType != null){
             throw new InvalidTypeException(var, line, valueType);
         }
 
