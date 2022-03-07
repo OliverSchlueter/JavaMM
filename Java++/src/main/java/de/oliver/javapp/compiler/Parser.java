@@ -26,14 +26,28 @@ public class Parser {
 
         addDefaultFunctions(program);
 
+        LinkedList<DefineBlockInstruction> openBlocks = new LinkedList<>();
+
+
         for (Map.Entry<Integer, LinkedList<KeyValue<Word, Token>>> lineTokens : tokens.entrySet()) {
             int line = lineTokens.getKey();
             LinkedList<KeyValue<Word, Token>> tokens = lineTokens.getValue();
 
             Instruction instruction = null;
 
+            // End of block
+            if(tokens.get(0).getValue() == Token.CLOSE_BRACES){
+                if(openBlocks.size() > 0){
+                    DefineBlockInstruction instr = openBlocks.get(0);
+                    program.addInstruction(instr);
+                    instr.execute();
+                    openBlocks.remove();
+                    continue;
+                }
+            }
+
             // Declare variable
-            if(Token.basicDataTypes().contains(tokens.get(0).getValue())
+            else if(Token.basicDataTypes().contains(tokens.get(0).getValue())
                     && tokens.get(1).getValue() == Token.IDENTIFIER
                     && tokens.get(2).getValue() == Token.EQUALS
                     && tokens.size() >= 4){
@@ -57,42 +71,13 @@ public class Parser {
                     value = calculateAst(program, ast);
                 }
                 instruction = new DeclareVariableInstruction(program, line, identifier, type, value);
-                instruction.execute();
-                instruction = null;
-            }
-
-            // Call function
-             else if(tokens.get(0).getValue() == Token.IDENTIFIER
-                    && tokens.get(1).getValue() == Token.OPEN_PARENTHESIS
-                    && tokens.get(tokens.size()-1).getValue() == Token.CLOSE_PARENTHESIS){
-
-                //TODO: more more checks
-                String functionName = tokens.get(0).getKey().value();
-                List<Variable> parameters = new ArrayList<>();
-
-                for (int i = 2; i < tokens.size(); i++) {
-                    Word word = tokens.get(i).getKey();
-                    Token token = tokens.get(i).getValue();
-                    // TODO: do calculating if needed here
-                    // for now it just accepts just one variable or literal
-                    if (token == Token.IDENTIFIER){
-                        Variable var = program.getVariable(word.value());
-                        if(var == null){
-                            Logger.logger.log(Parser.class, LogLevel.ERROR, "Variable not found: '" + word.value() + "' at " + word.formattedPosition());
-                            throw new VariableNotFoundException(word.value());
-                        }
-
-                        parameters.add(var);
-                    } else if(Token.literals().contains(token)){
-                        Variable var = new Variable(null, Token.getTypeOfLiteral(token), word.value()); //TODO: find correct type for literal
-                        parameters.add(var);
-                    }
+                if(openBlocks.size() == 0) {
+                    instruction.execute();
+                    instruction = null;
                 }
-
-                instruction = new CallFunctionInstruction(program, line, functionName, parameters);
             }
 
-             // Assign variable
+            // Assign variable
             else if(tokens.get(0).getValue() == Token.IDENTIFIER
                     && tokens.get(1).getValue() == Token.EQUALS){
 
@@ -115,15 +100,87 @@ public class Parser {
                 }
 
                 instruction = new AssignVariableInstruction(program, line, varName, value, dataType);
-                instruction.execute();
-                instruction = null;
+                if(openBlocks.size() == 0) {
+                    instruction.execute();
+                    instruction = null;
+                }
             }
 
-            program.addInstruction(instruction);
+            // Call function
+             else if(tokens.get(0).getValue() == Token.IDENTIFIER
+                    && tokens.get(1).getValue() == Token.OPEN_PARENTHESIS
+                    && tokens.get(tokens.size()-1).getValue() == Token.CLOSE_PARENTHESIS){
+
+                //TODO: more more checks
+                String functionName = tokens.get(0).getKey().value();
+                List<Variable> parameters = new ArrayList<>();
+
+                for (int i = 2; i < tokens.size(); i++) {
+                    Word word = tokens.get(i).getKey();
+                    Token token = tokens.get(i).getValue();
+                    // TODO: do calculating if needed here
+                    // for now it just accepts just one variable or literal
+                    if (token == Token.IDENTIFIER){
+                        Variable var = program.getVariable(word.value());
+                        if(openBlocks.size() > 0){
+                            // TODO: add var of func
+                        }
+                        //var = program.getVariable(word.value());
+                        if(var == null){
+                            Logger.logger.log(Parser.class, LogLevel.ERROR, "Variable not found: '" + word.value() + "' at " + word.formattedPosition());
+                            throw new VariableNotFoundException(word.value());
+                        }
+
+                        parameters.add(var);
+                    } else if(Token.literals().contains(token)){
+                        Variable var = new Variable(null, Token.getTypeOfLiteral(token), word.value()); //TODO: find correct type for literal
+                        parameters.add(var);
+                    }
+                }
+
+                instruction = new CallFunctionInstruction(program, line, functionName, parameters);
+            }
+
+             // Define function
+            else if(tokens.get(0).getValue() == Token.DEF
+                    && Token.basicDataTypes().contains(tokens.get(1).getValue())
+                    && tokens.get(2).getValue() == Token.IDENTIFIER
+                    && tokens.get(3).getValue() == Token.OPEN_PARENTHESIS
+                    && tokens.get(tokens.size() - 1).getValue() == Token.OPEN_BRACES
+                    && tokens.get(tokens.size() - 2).getValue() == Token.CLOSE_PARENTHESIS){
+
+                Token returnType = tokens.get(1).getValue();
+                String identifier = tokens.get(2).getKey().value();
+
+                HashMap<String, Token> attributes = new HashMap<>(); // attribute name, type
+
+                for (int i = 3; i < tokens.size() - 2; i++) {
+                    Token token = tokens.get(i).getValue();
+
+                    if(Token.basicDataTypes().contains(token)){
+                        if(tokens.get(i+1).getValue() == Token.IDENTIFIER){
+                            attributes.put(tokens.get(i+1).getKey().value(), token);
+                        }
+                    }
+
+                }
+
+                DefineFunctionInstruction defineFunctionInstruction = new DefineFunctionInstruction(program, line, new LinkedList<>(), identifier, returnType, attributes);
+                openBlocks.add(defineFunctionInstruction);
+                continue;
+            }
+
+
+            if(openBlocks.size() == 0) {
+                program.addInstruction(instruction);
+            } else {
+                openBlocks.get(0).addInstruction(instruction);
+            }
         }
 
         return program;
     }
+
 
     public Node<KeyValue<Word, Token>> astOfCalculation(LinkedList<KeyValue<Word, Token>> wordTokens){
         Node<KeyValue<Word, Token>> root = null;
@@ -282,7 +339,7 @@ public class Parser {
         LinkedList<Instruction> printInstr = new LinkedList<>();
         printInstr.add(new PrintInstruction(program, -1));
 
-        Function printFunc = new Function("print", printAttr, printInstr);
+        Function printFunc = new Function("print", Token.VOID, printAttr, printInstr);
         program.addFunction(printFunc);
 
         //PRINTLN
@@ -292,7 +349,7 @@ public class Parser {
         LinkedList<Instruction> printlnInstr = new LinkedList<>();
         printlnInstr.add(new PrintlnInstruction(program, -1));
 
-        Function printlnFunc = new Function("println", printlnAttr, printlnInstr);
+        Function printlnFunc = new Function("println", Token.VOID, printlnAttr, printlnInstr);
         program.addFunction(printlnFunc);
 
         //DUMP
@@ -302,7 +359,7 @@ public class Parser {
         LinkedList<Instruction> dumpInstr = new LinkedList<>();
         dumpInstr.add(new DumpInstruction(program, -1));
 
-        Function dumpFunc = new Function("dump", dumpAttr, dumpInstr);
+        Function dumpFunc = new Function("dump", Token.VOID, dumpAttr, dumpInstr);
         program.addFunction(dumpFunc);
     }
 

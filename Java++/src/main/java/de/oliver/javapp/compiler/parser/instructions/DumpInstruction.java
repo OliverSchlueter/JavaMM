@@ -7,6 +7,7 @@ import de.oliver.javapp.compiler.parser.Variable;
 import de.oliver.javapp.exceptions.*;
 
 import java.util.HashMap;
+import java.util.List;
 
 public class DumpInstruction extends Instruction implements ParameterInstruction {
 
@@ -21,8 +22,8 @@ public class DumpInstruction extends Instruction implements ParameterInstruction
     }
 
     @Override
-    public void execute(HashMap<String, Variable> parameters) throws InvalidArgumentLengthException, VariableNotFoundException, FunctionNotFoundException, VariableAlreadyExistsException, InvalidTypeException {
-        Variable typeVar = parameters.get("type");
+    public void execute(List<Variable> parameters) throws InvalidArgumentLengthException, VariableNotFoundException, FunctionNotFoundException, VariableAlreadyExistsException, InvalidTypeException {
+        Variable typeVar = parameters.get(0);
         String type = (String) typeVar.getValue();
         type = type.substring(1, type.length()-1);
 

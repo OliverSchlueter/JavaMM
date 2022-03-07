@@ -33,8 +33,8 @@ public class Program {
      */
     public void runProgram() throws InvalidArgumentLengthException, VariableNotFoundException, FunctionNotFoundException, VariableAlreadyExistsException, InvalidTypeException {
         Logger.logger.log(Program.class, LogLevel.INFO, "Running program now");
-        for (Instruction instruction : instructions) {
-            instruction.execute();
+        for (int i = 0; i < instructions.size(); i++) {
+            instructions.get(i).execute();
         }
         Logger.logger.log(Program.class, LogLevel.INFO, "Finished program now");
     }
@@ -102,10 +102,12 @@ public class Program {
         for (Function function : functions.values()) {
             String name = function.getName();
             String attr = "";
-            for (Map.Entry<String, Token> entry : function.getAttributes().entrySet()) {
-                attr += entry.getValue() + " " + entry.getKey() + ", ";
+            if(function.getAttributes().size() > 0) {
+                for (Map.Entry<String, Token> entry : function.getAttributes().entrySet()) {
+                    attr += entry.getValue() + " " + entry.getKey() + ", ";
+                }
+                attr = attr.substring(0, attr.length() - 2);
             }
-            attr = attr.substring(0, attr.length()-2);
             System.out.println("| void " + name + " (" + attr + ")"); // TODO: add return value if implemented
         }
         System.out.println("--------------------------");

@@ -46,6 +46,8 @@ public class Compiler {
                 break;
             }
 
+            line = line.replace("\t", "");
+
             // line is empty
             if (line.isEmpty()) {
                 continue;
