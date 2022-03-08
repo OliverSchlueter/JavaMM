@@ -6,8 +6,8 @@ public abstract class DefineBlockInstruction extends Instruction {
 
     protected final LinkedList<Instruction> instructions;
 
-    public DefineBlockInstruction(Program program, int line, LinkedList<Instruction> instructions) {
-        super(program, line);
+    public DefineBlockInstruction(Block parentBlock, Block block, int line, LinkedList<Instruction> instructions) {
+        super(parentBlock, block, line);
         this.instructions = instructions;
     }
 

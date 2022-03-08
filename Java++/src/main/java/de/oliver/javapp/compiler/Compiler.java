@@ -154,7 +154,7 @@ public class Compiler {
         Logger.logger.log(Compiler.class, LogLevel.INFO, "Generating simulation took " + totalTime + "ms\n");
 
         try {
-            program.runProgram();
+            program.run(new LinkedList<>());
         } catch (VariableNotFoundException | InvalidArgumentLengthException | FunctionNotFoundException | VariableAlreadyExistsException | InvalidTypeException e){
             Logger.logger.log(Compiler.class, LogLevel.ERROR, "Executing failed.");
             e.printStackTrace();

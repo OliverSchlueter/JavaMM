@@ -11,8 +11,8 @@ public class CallFunctionInstruction extends Instruction {
 
     private Function function;
 
-    public CallFunctionInstruction(Program program, int line, String functionName, List<Variable> parametersVars) {
-        super(program, line);
+    public CallFunctionInstruction(Block parentBlock, Block block, int line, String functionName, List<Variable> parametersVars) {
+        super(parentBlock, block, line);
         this.functionName = functionName;
         this.parametersVars = parametersVars;
         function = null;
@@ -20,7 +20,15 @@ public class CallFunctionInstruction extends Instruction {
 
     @Override
     public void execute() throws InvalidArgumentLengthException, VariableNotFoundException, FunctionNotFoundException, VariableAlreadyExistsException, InvalidTypeException {
-        this.function = program.getFunction(functionName);
+        if(block instanceof Program pgr) {
+            this.function = pgr.getFunction(functionName);
+        } else {
+            for (Block parentBlock : block.getAllParentBlocks()) {
+                if (parentBlock instanceof Program pgr) {
+                    this.function = pgr.getFunction(functionName);
+                }
+            }
+        }
 
         if(this.function == null){
             throw new FunctionNotFoundException(functionName);
@@ -31,6 +39,10 @@ public class CallFunctionInstruction extends Instruction {
 
         if (parameterSize != attributeSize) {
             throw new InvalidArgumentLengthException(attributeSize, parameterSize);
+        }
+
+        if(function.getName().equals("dump")){
+            function.getInstructions().get(0).setBlock(block);
         }
 
         function.run(parametersVars);

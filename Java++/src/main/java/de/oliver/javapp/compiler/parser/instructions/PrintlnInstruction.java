@@ -1,16 +1,14 @@
 package de.oliver.javapp.compiler.parser.instructions;
 
-import de.oliver.javapp.compiler.parser.Instruction;
-import de.oliver.javapp.compiler.parser.ParameterInstruction;
-import de.oliver.javapp.compiler.parser.Program;
-import de.oliver.javapp.compiler.parser.Variable;
+import de.oliver.javapp.compiler.parser.*;
+
 import java.util.HashMap;
 import java.util.List;
 
 public class PrintlnInstruction extends Instruction implements ParameterInstruction {
 
-    public PrintlnInstruction(Program program, int line) {
-        super(program, line);
+    public PrintlnInstruction(Block block, int line) {
+        super(block, block, line);
     }
 
     @Override

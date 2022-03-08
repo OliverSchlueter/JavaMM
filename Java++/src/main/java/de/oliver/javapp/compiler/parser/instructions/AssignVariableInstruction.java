@@ -1,6 +1,7 @@
 package de.oliver.javapp.compiler.parser.instructions;
 
 import de.oliver.javapp.compiler.Parser;
+import de.oliver.javapp.compiler.parser.Block;
 import de.oliver.javapp.compiler.parser.Instruction;
 import de.oliver.javapp.compiler.parser.Program;
 import de.oliver.javapp.compiler.parser.Variable;
@@ -17,8 +18,8 @@ public class AssignVariableInstruction extends Instruction {
     private final Node<KeyValue<Word, Token>> ast;
     private final Token valueType;
 
-    public AssignVariableInstruction(Program program, int line, String variableName, Node<KeyValue<Word, Token>> ast, Token valueType) {
-        super(program, line);
+    public AssignVariableInstruction(Program program, Block block, int line, String variableName, Node<KeyValue<Word, Token>> ast, Token valueType) {
+        super(program, block, line);
         this.variableName = variableName;
         this.ast = ast;
         this.valueType = valueType;
@@ -26,7 +27,7 @@ public class AssignVariableInstruction extends Instruction {
 
     @Override
     public void execute() throws VariableNotFoundException, InvalidTypeException {
-        Variable var = program.getVariable(variableName);
+        Variable var = block.getVariable(variableName);
 
         if(var == null){
             throw new VariableNotFoundException(variableName);
@@ -36,7 +37,7 @@ public class AssignVariableInstruction extends Instruction {
             throw new InvalidTypeException(var, line, valueType);
         }
 
-        var.setValue(Parser.calculateAst(program, ast));
+        var.setValue(Parser.calculateAst(block, ast));
     }
 
 

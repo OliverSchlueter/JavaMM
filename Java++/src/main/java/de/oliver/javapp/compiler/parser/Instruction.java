@@ -2,13 +2,14 @@ package de.oliver.javapp.compiler.parser;
 
 import de.oliver.javapp.exceptions.*;
 
+
 public abstract class Instruction {
 
-    protected final Program program;
+    protected Block block;
     protected final int line;
 
-    public Instruction(Program program, int line) {
-        this.program = program;
+    public Instruction(Block parentBlock, Block block, int line) {
+        this.block = block;
         this.line = line;
     }
 
@@ -18,7 +19,12 @@ public abstract class Instruction {
         return line;
     }
 
-    public Program getProgram() {
-        return program;
+    public Block getBlock() {
+        return block;
     }
+
+    public void setBlock(Block block) {
+        this.block = block;
+    }
+
 }
