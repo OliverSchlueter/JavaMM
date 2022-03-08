@@ -33,7 +33,8 @@ public class Function {
     public Object run(List<Variable> parameters) throws InvalidArgumentLengthException, VariableNotFoundException, FunctionNotFoundException, VariableAlreadyExistsException, InvalidTypeException {
         Object returnValue = null;
 
-        for (Instruction instruction : instructions) {
+        for (int i = 0; i < instructions.size(); i++) {
+            Instruction instruction = instructions.get(i);
             if(instruction instanceof ParameterInstruction pInstr){
                 pInstr.execute(parameters);
             } else {

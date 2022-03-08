@@ -24,9 +24,9 @@ public class DefineFunctionInstruction extends DefineBlockInstruction {
     @Override
     public void execute() throws VariableNotFoundException, InvalidArgumentLengthException, FunctionNotFoundException, VariableAlreadyExistsException, InvalidTypeException {
         Function function = new Function(name, returnType, attributes, instructions);
-        for (Map.Entry<String, Token> entry : attributes.entrySet()) {
+        /*for (Map.Entry<String, Token> entry : attributes.entrySet()) {
             function.addVariable(new Variable(entry.getKey(), entry.getValue(), null));
-        }
+        }*/
         program.addFunction(function);
     }
 

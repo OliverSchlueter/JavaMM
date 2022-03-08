@@ -39,8 +39,9 @@ public class Parser {
             if(tokens.get(0).getValue() == Token.CLOSE_BRACES){
                 if(openBlocks.size() > 0){
                     DefineBlockInstruction instr = openBlocks.get(0);
-                    program.addInstruction(instr);
+                    //program.addInstruction(instr);
                     instr.execute();
+                    //program.addInstruction(instr);
                     openBlocks.remove();
                     continue;
                 }
@@ -74,6 +75,7 @@ public class Parser {
                 if(openBlocks.size() == 0) {
                     instruction.execute();
                     instruction = null;
+
                 }
             }
 
@@ -84,26 +86,27 @@ public class Parser {
                 String varName = tokens.get(0).getKey().value();
                 Token dataType = program.getVariable(varName).getType();
 
-                Object value = null;
-
                 LinkedList<KeyValue<Word, Token>> subWordTokens = new LinkedList<>();
                 for (int i = 2; i < tokens.size(); i++) {
                     subWordTokens.add(tokens.get(i));
                 }
 
-                if(dataType == Token.TYPE_STRING){
-                    value = combineStrings(program, subWordTokens);
-                } else {
-                    Node<KeyValue<Word, Token>> ast = astOfCalculation(subWordTokens);
+                Node<KeyValue<Word, Token>> ast;
+
+                //TODO: make strings to ast too
+                //if(dataType == Token.TYPE_STRING){
+                  //  value = combineStrings(program, subWordTokens);
+                //} else {
+                    ast = astOfCalculation(subWordTokens);
                     //ast.print("");
-                    value = calculateAst(program, ast);
+                //}
+
+                instruction = new AssignVariableInstruction(program, line, varName, ast, dataType);
+                if(openBlocks.size() == 0) {
+                    //instruction.execute();
+                    //instruction = null;
                 }
 
-                instruction = new AssignVariableInstruction(program, line, varName, value, dataType);
-                if(openBlocks.size() == 0) {
-                    instruction.execute();
-                    instruction = null;
-                }
             }
 
             // Call function
@@ -170,6 +173,10 @@ public class Parser {
                 continue;
             }
 
+
+            if(instruction == null){
+                continue;
+            }
 
             if(openBlocks.size() == 0) {
                 program.addInstruction(instruction);
@@ -259,7 +266,7 @@ public class Parser {
         return root;
     }
 
-    public double calculateAst(Program program, Node<KeyValue<Word, Token>> ast){
+    public static double calculateAst(Program program, Node<KeyValue<Word, Token>> ast){
 
         Node<KeyValue<Word, Token>> lastParent = ast;
 
@@ -283,7 +290,7 @@ public class Parser {
     }
 
     // TODO: currently only supports + - * /
-    public double calcOfOperatorNode(Program program, Node<KeyValue<Word, Token>> node){
+    public static double calcOfOperatorNode(Program program, Node<KeyValue<Word, Token>> node){
         double out = 0;
         KeyValue<Word, Token> leftChild = node.getChildren().get(0).getData();
         KeyValue<Word, Token> rightChild = node.getChildren().get(1).getData();
