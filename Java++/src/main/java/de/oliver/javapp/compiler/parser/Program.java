@@ -13,12 +13,12 @@ public class Program extends Block{
     private final HashMap<String, Function> functions; // TODO: add support for same name but different attributes
 
     public Program(LinkedList<Instruction> instructions, HashMap<String, Variable> variables, HashMap<String, Function> functions) {
-        super(null, instructions, variables, new HashMap<>());
+        super(null, instructions, variables);
         this.functions = functions;
     }
 
     public Program(){
-        super(null, new LinkedList<>(), new HashMap<>(), new HashMap<>());
+        super(null, new LinkedList<>(), new HashMap<>());
         this.functions = new HashMap<>();
     }
 

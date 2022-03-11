@@ -4,7 +4,9 @@ import de.oliver.javapp.compiler.Parser;
 import de.oliver.javapp.compiler.parser.Block;
 import de.oliver.javapp.compiler.parser.Instruction;
 import de.oliver.javapp.compiler.parser.Variable;
+import de.oliver.javapp.exceptions.InvalidTypeException;
 import de.oliver.javapp.exceptions.VariableAlreadyExistsException;
+import de.oliver.javapp.exceptions.VariableNotFoundException;
 import de.oliver.javapp.utils.KeyValue;
 import de.oliver.javapp.utils.Node;
 import de.oliver.javapp.utils.Token;
@@ -24,16 +26,29 @@ public class DeclareVariableInstruction extends Instruction {
     }
 
     @Override
-    public void execute() throws VariableAlreadyExistsException {
-        Variable var = new Variable(identifier.value(), type, Parser.calculateAst(block, ast));
+    public void execute() throws VariableAlreadyExistsException, VariableNotFoundException, InvalidTypeException {
+        Object value = null;
 
-        if(block.getVariable(identifier.value()) != null){
+        switch (type){
+            case TYPE_STRING -> value = Parser.calcStringAst(block, ast);
+            case TYPE_DOUBLE -> value = Parser.calculateAst(block, ast);
+            case TYPE_INTEGER -> value = (int) Parser.calculateAst(block, ast);
+            // TODO: add all other datatypes
+            default -> value = Parser.calculateAst(block, ast);
+        }
+
+        Variable var = new Variable(identifier.value(), type, value);
+
+        if(block.getVariable(identifier.value()) != null && block.getVariable(identifier.value()).getValue() != null){
             throw new VariableAlreadyExistsException(identifier.value());
         }
 
         // TODO: check if actual value is matching type
-
-        block.addVariable(var);
+        if(block.getVariable(identifier.value()) != null){
+            block.getVariable(identifier.value()).setValue(var.getValue());
+        } else {
+            block.addVariable(var);
+        }
     }
 
     public Word getIdentifier() {

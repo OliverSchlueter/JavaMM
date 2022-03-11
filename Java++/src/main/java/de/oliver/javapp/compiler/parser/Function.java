@@ -1,5 +1,7 @@
 package de.oliver.javapp.compiler.parser;
 
+import de.oliver.javapp.compiler.Parser;
+import de.oliver.javapp.compiler.parser.instructions.ReturnInstruction;
 import de.oliver.javapp.exceptions.*;
 import de.oliver.javapp.utils.Token;
 
@@ -16,7 +18,7 @@ public class Function extends Block {
 
 
     public Function(Program program, String name, Token returnType, HashMap<String, Variable> variables, HashMap<String, Token> attributes, LinkedList<Instruction> instructions) {
-        super(program, instructions, variables, attributes);
+        super(program, instructions, variables);
         this.name = name;
         this.returnType = returnType;
         this.returnValue = null;
@@ -24,7 +26,7 @@ public class Function extends Block {
     }
 
     public Function(Program program, String name, Token returnType, HashMap<String, Token> attributes, LinkedList<Instruction> instructions) {
-        super(program, instructions, new HashMap<>(), attributes);
+        super(program, instructions, new HashMap<>());
         this.name = name;
         this.returnType = returnType;
         this.returnValue = null;
@@ -34,7 +36,7 @@ public class Function extends Block {
     }
 
     public Function(Program program, String name, Token returnType, HashMap<String, Token> attributes){
-        super(program, new LinkedList<>(), new HashMap<>(), attributes);
+        super(program, new LinkedList<>(), new HashMap<>());
         this.name = name;
         this.returnType = returnType;
         this.returnValue = null;
@@ -73,6 +75,19 @@ public class Function extends Block {
 
         for (int i = 0; i < instructions.size(); i++) {
             Instruction instruction = instructions.get(i);
+
+            if(instruction instanceof ReturnInstruction returnInstruction){
+                if(returnValue == null){
+                    if(returnType == Token.VOID && returnInstruction.getAst() == null){
+                        break;
+                    }
+                    returnValue = Parser.calculateAst(returnInstruction.getBlock(), returnInstruction.getAst());
+                    break;
+                } else {
+                    // TODO: return value is already set somehow
+                }
+            }
+
             if(instruction instanceof ParameterInstruction pInstr){
                 pInstr.execute(parameters);
             } else {
@@ -80,7 +95,9 @@ public class Function extends Block {
             }
         }
 
-        //TODO: add return, maybe with interface ReturnInstruction
+        if(returnType != Token.VOID && returnValue == null){
+            // TODO: no return for function
+        }
     }
 
     public String getName() {
@@ -97,5 +114,9 @@ public class Function extends Block {
 
     public Object getReturnValue() {
         return returnValue;
+    }
+
+    public void setReturnValue(Object returnValue) {
+        this.returnValue = returnValue;
     }
 }

@@ -67,21 +67,25 @@ public class Parser {
                 Node<KeyValue<Word, Token>> ast;
 
                 // TODO: add support for strings
-                //if(type == Token.TYPE_STRING){
-                //    value = combineStrings(program, subWordTokens);
-                //} else {
+                if(type == Token.TYPE_STRING){
+                    ast = stringAst(subWordTokens);
+                } else {
                     ast = astOfCalculation(subWordTokens);
-                    //ast.print("");
-                //}
+                }
+                ast.print("");
+
                 instruction = new DeclareVariableInstruction(program, program, line, identifier, type, ast);
                 if(openBlocks.size() == 0) {
                     //instruction.execute();
-                    //continue;
-                    program.getDeclaredVariables().put(identifier.value(), type);
+                    //program.getDeclaredVariables().put(identifier.value(), type);
+                    program.addDeclaredVariable(identifier.value(), type);
                 } else {
                     if(openBlocks.get(0) instanceof DefineFunctionInstruction instr){
                         instruction.setBlock(instr.getFunction());
+                        //instr.getFunction().getDeclaredVariables().put(identifier.value(), type);
                         //instruction.execute();
+                        //continue;
+                        instr.getFunction().addDeclaredVariable(identifier.value(), type);
                     }
                 }
             }
@@ -100,19 +104,12 @@ public class Parser {
                                 dataType = var.getType();
                                 break;
                             }
-
-                            if(parent.getDeclaredVariables().containsKey(varName)){
-                                dataType = parent.getDeclaredVariables().get(varName);
-                                break;
-                            }
                         }
                     }
                 } else {
                     Variable var = program.getVariable(varName);
                     if(var != null){
                         dataType = var.getType();
-                    } else if (program.getDeclaredVariables().containsKey(varName)){
-                        dataType = program.getDeclaredVariables().get(varName);
                     }
 
                 }
@@ -129,12 +126,12 @@ public class Parser {
                 Node<KeyValue<Word, Token>> ast;
 
                 //TODO: make strings to ast too
-                //if(dataType == Token.TYPE_STRING){
-                  //  value = combineStrings(program, subWordTokens);
-                //} else {
+                if(dataType == Token.TYPE_STRING){
+                    ast = stringAst(subWordTokens);
+                } else {
                     ast = astOfCalculation(subWordTokens);
-                    //ast.print("");
-                //}
+                }
+                ast.print("");
 
                 instruction = new AssignVariableInstruction(program, program, line, varName, ast, dataType);
                 if(openBlocks.size() > 0) {
@@ -210,7 +207,7 @@ public class Parser {
 
                     if(Token.basicDataTypes().contains(token)){
                         if(tokens.get(i+1).getValue() == Token.IDENTIFIER){
-                            attributes.put(tokens.get(i+1).getKey().value(), token);
+                            attributes.put(tokens.get(i + 1).getKey().value(), token);
                         }
                     }
 
@@ -225,6 +222,27 @@ public class Parser {
                 DefineFunctionInstruction defineFunctionInstruction = new DefineFunctionInstruction(program, program, line, new LinkedList<>(), identifier, returnType, attributes);
                 openBlocks.add(defineFunctionInstruction);
                 continue;
+            }
+
+            // Return
+            else if (tokens.get(0).getValue() == Token.RETURN){
+                LinkedList<KeyValue<Word, Token>> subWordTokens = new LinkedList<>();
+                for (int i = 1; i < tokens.size(); i++) {
+                    subWordTokens.add(tokens.get(i));
+                }
+
+                Node<KeyValue<Word, Token>> ast;
+
+                //TODO: make strings to ast too
+                ast = astOfCalculation(subWordTokens);
+
+                instruction = new ReturnInstruction(program, program, line, ast);
+
+                if(openBlocks.size() > 0) {
+                    if(openBlocks.get(0) instanceof DefineFunctionInstruction instr){
+                        instruction.setBlock(instr.getFunction());
+                    }
+                }
             }
 
 
@@ -334,7 +352,7 @@ public class Parser {
             } else if(Token.literals().contains(lastParent.getData().getValue())) {
                 return Double.parseDouble(lastParent.getData().getKey().value());
             } else {
-                return Double.MIN_VALUE;
+                return (double) block.getVariable(lastParent.getData().getKey().value()).getValue();
             }
         } else {
             lastParent.setData(new KeyValue<>(new Word(-1, -1, calcOfOperatorNode(block, lastParent) + ""), lastParent.getChildren().get(0).getData().getValue()));
@@ -367,6 +385,43 @@ public class Parser {
         return out;
     }
 
+    public Node<KeyValue<Word, Token>> stringAst(LinkedList<KeyValue<Word, Token>> wordTokens){
+        Node<KeyValue<Word, Token>> ast = new Node<>(new KeyValue<>(new Word(-1, -1, ""), Token.LITERAL_STRING));
+        for (int i = 0; i < wordTokens.size(); i++) {
+            ast.addChild(new Node<>(wordTokens.get(i)));
+        }
+
+        return ast;
+    }
+
+    public static String calcStringAst(Block block, Node<KeyValue<Word, Token>> ast) throws VariableNotFoundException, InvalidTypeException {
+        String out = "";
+
+        for (int i = 0; i < ast.getChildren().size(); i++) {
+            Token type = ast.getChildren().get(i).getData().getValue();
+            String data = ast.getChildren().get(i).getData().getKey().value();
+
+            if(type == Token.LITERAL_STRING){
+                out += data.substring(1, data.length() - 1);
+            } else if(type == Token.IDENTIFIER){
+                Variable var = block.getVariable(data);
+                if(var == null){
+                    throw new VariableNotFoundException(data);
+                }
+
+                if(var.getType() != Token.TYPE_STRING){
+                    throw new InvalidTypeException(var, ast.getChildren().get(i).getData().getKey().line(), Token.TYPE_STRING);
+                }
+
+                out += (String) var.getValue();
+            }
+
+        }
+
+        return out;
+    }
+
+    @Deprecated
     public String combineStrings(Program program, LinkedList<KeyValue<Word, Token>> wordTokens) throws InvalidTypeException, VariableNotFoundException {
         String s = "";
         for (KeyValue<Word, Token> wordToken : wordTokens) {

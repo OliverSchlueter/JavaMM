@@ -37,7 +37,17 @@ public class AssignVariableInstruction extends Instruction {
             throw new InvalidTypeException(var, line, valueType);
         }
 
-        var.setValue(Parser.calculateAst(block, ast));
+        Object value = null;
+
+        switch (var.getType()){
+            case TYPE_STRING -> value = Parser.calcStringAst(block, ast);
+            case TYPE_DOUBLE -> value = Parser.calculateAst(block, ast);
+            case TYPE_INTEGER -> value = (int) Parser.calculateAst(block, ast);
+            // TODO: add all other datatypes
+            default -> value = Parser.calculateAst(block, ast);
+        }
+
+        var.setValue(value);
     }
 
 

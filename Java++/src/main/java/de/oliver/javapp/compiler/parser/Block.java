@@ -12,13 +12,11 @@ public abstract class Block {
     protected final Block parentBlock;
     protected final LinkedList<Instruction> instructions;
     protected final HashMap<String, Variable> variables;
-    protected final HashMap<String, Token> declaredVariables;
 
-    public Block(Block parentBlock, LinkedList<Instruction> instructions, HashMap<String, Variable> variables, HashMap<String, Token> declaredVariables) {
+    public Block(Block parentBlock, LinkedList<Instruction> instructions, HashMap<String, Variable> variables) {
         this.parentBlock = parentBlock;
         this.instructions = instructions;
         this.variables = variables;
-        this.declaredVariables = declaredVariables;
     }
 
     public abstract void run(List<Variable> parameters) throws InvalidArgumentLengthException, VariableNotFoundException, FunctionNotFoundException, VariableAlreadyExistsException, InvalidTypeException;
@@ -89,12 +87,9 @@ public abstract class Block {
         variables.put(variable.getName(), variable);
     }
 
-    public HashMap<String, Token> getDeclaredVariables() {
-        return declaredVariables;
-    }
-
     public void addDeclaredVariable(String name, Token type){
-        declaredVariables.put(name, type);
+        //declaredVariables.put(name, type);
+        variables.put(name, new Variable(name, type, null));
     }
 
     public void dumpVariables(){
