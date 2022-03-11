@@ -1,16 +1,14 @@
 package de.oliver.javapp.compiler.parser.instructions;
 
-import de.oliver.javapp.compiler.parser.Instruction;
-import de.oliver.javapp.compiler.parser.ParameterInstruction;
-import de.oliver.javapp.compiler.parser.Program;
-import de.oliver.javapp.compiler.parser.Variable;
+import de.oliver.javapp.compiler.parser.*;
 
 import java.util.HashMap;
+import java.util.List;
 
 public class PrintInstruction extends Instruction implements ParameterInstruction {
 
-    public PrintInstruction(Program program, int line) {
-        super(program, line);
+    public PrintInstruction(Block block, int line) {
+        super(block, block, line);
     }
 
     @Override
@@ -19,8 +17,8 @@ public class PrintInstruction extends Instruction implements ParameterInstructio
     }
 
     @Override
-    public void execute(HashMap<String, Variable> parameters) {
-        Variable messageVar = parameters.get("message");
+    public void execute(List<Variable> parameters) {
+        Variable messageVar = parameters.get(0);
         String message = messageVar.getValue().toString().startsWith("\"") && messageVar.getValue().toString().endsWith("\"")
                 ? messageVar.getValue().toString().substring(1, messageVar.getValue().toString().length() - 1)
                 : messageVar.getValue().toString();

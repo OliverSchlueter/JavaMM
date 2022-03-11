@@ -7,7 +7,10 @@ import java.util.List;
 public enum Token {
 
     IDENTIFIER(null),
-    //CALL_FUNCTION(null),
+
+    DEF("def"),
+    RETURN("return"),
+    VOID("void"),
 
     // Literals
     LITERAL_LONG(null),
@@ -41,6 +44,8 @@ public enum Token {
 
     OPEN_PARENTHESIS("("),
     CLOSE_PARENTHESIS(")"),
+    OPEN_BRACES("{"),
+    CLOSE_BRACES("}"),
     COMMA(","),
 
     //Assignment operators
@@ -67,6 +72,7 @@ public enum Token {
 
     public static List<Token> basicDataTypes() {
         List<Token> tokens = new ArrayList<>();
+        tokens.add(VOID);
         for (Token value : values()) {
             if(value.name().startsWith("TYPE_")){
                 tokens.add(value);

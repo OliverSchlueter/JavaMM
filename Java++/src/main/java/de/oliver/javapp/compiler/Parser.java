@@ -26,14 +26,29 @@ public class Parser {
 
         addDefaultFunctions(program);
 
+        LinkedList<DefineBlockInstruction> openBlocks = new LinkedList<>();
+
+
         for (Map.Entry<Integer, LinkedList<KeyValue<Word, Token>>> lineTokens : tokens.entrySet()) {
             int line = lineTokens.getKey();
             LinkedList<KeyValue<Word, Token>> tokens = lineTokens.getValue();
 
             Instruction instruction = null;
 
+            // End of block
+            if(tokens.get(0).getValue() == Token.CLOSE_BRACES){
+                if(openBlocks.size() > 0){
+                    DefineBlockInstruction instr = openBlocks.get(0);
+                    //program.addInstruction(instr);
+                    instr.execute();
+                    //program.addInstruction(instr);
+                    openBlocks.remove();
+                    continue;
+                }
+            }
+
             // Declare variable
-            if(Token.basicDataTypes().contains(tokens.get(0).getValue())
+            else if(Token.basicDataTypes().contains(tokens.get(0).getValue())
                     && tokens.get(1).getValue() == Token.IDENTIFIER
                     && tokens.get(2).getValue() == Token.EQUALS
                     && tokens.size() >= 4){
@@ -49,16 +64,82 @@ public class Parser {
                     subWordTokens.add(tokens.get(i));
                 }
 
+                Node<KeyValue<Word, Token>> ast;
+
+                // TODO: add support for strings
                 if(type == Token.TYPE_STRING){
-                    value = combineStrings(program, subWordTokens);
+                    ast = stringAst(subWordTokens);
                 } else {
-                    Node<KeyValue<Word, Token>> ast = astOfCalculation(subWordTokens);
-                    //ast.print("");
-                    value = calculateAst(program, ast);
+                    ast = astOfCalculation(subWordTokens);
                 }
-                instruction = new DeclareVariableInstruction(program, line, identifier, type, value);
-                instruction.execute();
-                instruction = null;
+                ast.print("");
+
+                instruction = new DeclareVariableInstruction(program, program, line, identifier, type, ast);
+                if(openBlocks.size() == 0) {
+                    //instruction.execute();
+                    //program.getDeclaredVariables().put(identifier.value(), type);
+                    program.addDeclaredVariable(identifier.value(), type);
+                } else {
+                    if(openBlocks.get(0) instanceof DefineFunctionInstruction instr){
+                        instruction.setBlock(instr.getFunction());
+                        //instr.getFunction().getDeclaredVariables().put(identifier.value(), type);
+                        //instruction.execute();
+                        //continue;
+                        instr.getFunction().addDeclaredVariable(identifier.value(), type);
+                    }
+                }
+            }
+
+            // Assign variable
+            else if(tokens.get(0).getValue() == Token.IDENTIFIER
+                    && tokens.get(1).getValue() == Token.EQUALS){
+
+                String varName = tokens.get(0).getKey().value();
+                Token dataType = null;
+                if(openBlocks.size() > 0){
+                    if(openBlocks.get(0) instanceof DefineFunctionInstruction instr){
+                        for (Block parent : instr.getFunction().getAllParentBlocks()) {
+                            Variable var = parent.getVariable(varName);
+                            if(var != null){
+                                dataType = var.getType();
+                                break;
+                            }
+                        }
+                    }
+                } else {
+                    Variable var = program.getVariable(varName);
+                    if(var != null){
+                        dataType = var.getType();
+                    }
+
+                }
+
+                if(dataType == null){
+                    throw new VariableNotFoundException(varName);
+                }
+
+                LinkedList<KeyValue<Word, Token>> subWordTokens = new LinkedList<>();
+                for (int i = 2; i < tokens.size(); i++) {
+                    subWordTokens.add(tokens.get(i));
+                }
+
+                Node<KeyValue<Word, Token>> ast;
+
+                //TODO: make strings to ast too
+                if(dataType == Token.TYPE_STRING){
+                    ast = stringAst(subWordTokens);
+                } else {
+                    ast = astOfCalculation(subWordTokens);
+                }
+                ast.print("");
+
+                instruction = new AssignVariableInstruction(program, program, line, varName, ast, dataType);
+                if(openBlocks.size() > 0) {
+                    if(openBlocks.get(0) instanceof DefineFunctionInstruction instr){
+                        instruction.setBlock(instr.getFunction());
+                    }
+                }
+
             }
 
             // Call function
@@ -76,7 +157,17 @@ public class Parser {
                     // TODO: do calculating if needed here
                     // for now it just accepts just one variable or literal
                     if (token == Token.IDENTIFIER){
-                        Variable var = program.getVariable(word.value());
+                        Variable var = null;
+                        if(openBlocks.size() > 0){
+                            if(openBlocks.get(0) instanceof DefineFunctionInstruction instr) {
+                                var = instr.getFunction().getVariable(word.value());
+                            }
+                        }
+
+                        if(var == null){
+                            var = program.getVariable(word.value());
+                        }
+
                         if(var == null){
                             Logger.logger.log(Parser.class, LogLevel.ERROR, "Variable not found: '" + word.value() + "' at " + word.formattedPosition());
                             throw new VariableNotFoundException(word.value());
@@ -89,41 +180,86 @@ public class Parser {
                     }
                 }
 
-                instruction = new CallFunctionInstruction(program, line, functionName, parameters);
+                instruction = new CallFunctionInstruction(program, program, line, functionName, parameters);
+
+                if(openBlocks.size() > 0) {
+                    if(openBlocks.get(0) instanceof DefineFunctionInstruction instr){
+                        instruction.setBlock(instr.getFunction());
+                    }
+                }
             }
 
-             // Assign variable
-            else if(tokens.get(0).getValue() == Token.IDENTIFIER
-                    && tokens.get(1).getValue() == Token.EQUALS){
+             // Define function
+            else if(tokens.get(0).getValue() == Token.DEF
+                    && Token.basicDataTypes().contains(tokens.get(1).getValue())
+                    && tokens.get(2).getValue() == Token.IDENTIFIER
+                    && tokens.get(3).getValue() == Token.OPEN_PARENTHESIS
+                    && tokens.get(tokens.size() - 1).getValue() == Token.OPEN_BRACES
+                    && tokens.get(tokens.size() - 2).getValue() == Token.CLOSE_PARENTHESIS){
 
-                String varName = tokens.get(0).getKey().value();
-                Token dataType = program.getVariable(varName).getType();
+                Token returnType = tokens.get(1).getValue();
+                String identifier = tokens.get(2).getKey().value();
 
-                Object value = null;
+                HashMap<String, Token> attributes = new HashMap<>(); // attribute name, type
 
+                for (int i = 4; i < tokens.size() - 2; i+=1) {
+                    Token token = tokens.get(i).getValue();
+
+                    if(Token.basicDataTypes().contains(token)){
+                        if(tokens.get(i+1).getValue() == Token.IDENTIFIER){
+                            attributes.put(tokens.get(i + 1).getKey().value(), token);
+                        }
+                    }
+
+                }
+
+                for (DefineBlockInstruction openBlock : openBlocks) {
+                    if(openBlock instanceof DefineFunctionInstruction){
+                        return null; //TODO: can not define a function in a function
+                    }
+                }
+
+                DefineFunctionInstruction defineFunctionInstruction = new DefineFunctionInstruction(program, program, line, new LinkedList<>(), identifier, returnType, attributes);
+                openBlocks.add(defineFunctionInstruction);
+                continue;
+            }
+
+            // Return
+            else if (tokens.get(0).getValue() == Token.RETURN){
                 LinkedList<KeyValue<Word, Token>> subWordTokens = new LinkedList<>();
-                for (int i = 2; i < tokens.size(); i++) {
+                for (int i = 1; i < tokens.size(); i++) {
                     subWordTokens.add(tokens.get(i));
                 }
 
-                if(dataType == Token.TYPE_STRING){
-                    value = combineStrings(program, subWordTokens);
-                } else {
-                    Node<KeyValue<Word, Token>> ast = astOfCalculation(subWordTokens);
-                    //ast.print("");
-                    value = calculateAst(program, ast);
-                }
+                Node<KeyValue<Word, Token>> ast;
 
-                instruction = new AssignVariableInstruction(program, line, varName, value, dataType);
-                instruction.execute();
-                instruction = null;
+                //TODO: make strings to ast too
+                ast = astOfCalculation(subWordTokens);
+
+                instruction = new ReturnInstruction(program, program, line, ast);
+
+                if(openBlocks.size() > 0) {
+                    if(openBlocks.get(0) instanceof DefineFunctionInstruction instr){
+                        instruction.setBlock(instr.getFunction());
+                    }
+                }
             }
 
-            program.addInstruction(instruction);
+
+            if(instruction == null){
+                continue;
+            }
+
+            if(openBlocks.size() == 0) {
+                program.addInstruction(instruction);
+            } else {
+                openBlocks.get(0).addInstruction(instruction);
+            }
         }
 
         return program;
     }
+
 
     public Node<KeyValue<Word, Token>> astOfCalculation(LinkedList<KeyValue<Word, Token>> wordTokens){
         Node<KeyValue<Word, Token>> root = null;
@@ -202,7 +338,7 @@ public class Parser {
         return root;
     }
 
-    public double calculateAst(Program program, Node<KeyValue<Word, Token>> ast){
+    public static double calculateAst(Block block, Node<KeyValue<Word, Token>> ast){
 
         Node<KeyValue<Word, Token>> lastParent = ast;
 
@@ -212,27 +348,32 @@ public class Parser {
 
         if(lastParent.getParent() == null){
             if(lastParent.getChildren().size() == 2) {
-                return calcOfOperatorNode(program, lastParent);
+                return calcOfOperatorNode(block, lastParent);
             } else if(Token.literals().contains(lastParent.getData().getValue())) {
                 return Double.parseDouble(lastParent.getData().getKey().value());
             } else {
-                return Double.MIN_VALUE;
+                return (double) block.getVariable(lastParent.getData().getKey().value()).getValue();
             }
         } else {
-            lastParent.setData(new KeyValue<>(new Word(-1, -1, calcOfOperatorNode(program, lastParent) + ""), lastParent.getChildren().get(0).getData().getValue()));
+            lastParent.setData(new KeyValue<>(new Word(-1, -1, calcOfOperatorNode(block, lastParent) + ""), lastParent.getChildren().get(0).getData().getValue()));
             lastParent.getChildren().clear();
-            return calculateAst(program, ast);
+            return calculateAst(block, ast);
         }
     }
 
     // TODO: currently only supports + - * /
-    public double calcOfOperatorNode(Program program, Node<KeyValue<Word, Token>> node){
+    public static double calcOfOperatorNode(Block block, Node<KeyValue<Word, Token>> node){
         double out = 0;
         KeyValue<Word, Token> leftChild = node.getChildren().get(0).getData();
         KeyValue<Word, Token> rightChild = node.getChildren().get(1).getData();
 
-        double leftD = Token.literals().contains(leftChild.getValue()) ? Double.parseDouble(leftChild.getKey().value()) : (double) program.getVariable(leftChild.getKey().value()).getValue();
-        double rightD = Token.literals().contains(rightChild.getValue()) ? Double.parseDouble(rightChild.getKey().value()) : (double) program.getVariable(rightChild.getKey().value()).getValue();
+        double leftD = Token.literals().contains(leftChild.getValue())
+                ? Double.parseDouble(leftChild.getKey().value())
+                : (double) block.getVariable(leftChild.getKey().value()).getValue();
+
+        double rightD = Token.literals().contains(rightChild.getValue())
+                ? Double.parseDouble(rightChild.getKey().value())
+                : (double) block.getVariable(rightChild.getKey().value()).getValue();
 
         switch (node.getData().getValue()){
             case PLUS -> out += leftD + rightD;
@@ -244,6 +385,43 @@ public class Parser {
         return out;
     }
 
+    public Node<KeyValue<Word, Token>> stringAst(LinkedList<KeyValue<Word, Token>> wordTokens){
+        Node<KeyValue<Word, Token>> ast = new Node<>(new KeyValue<>(new Word(-1, -1, ""), Token.LITERAL_STRING));
+        for (int i = 0; i < wordTokens.size(); i++) {
+            ast.addChild(new Node<>(wordTokens.get(i)));
+        }
+
+        return ast;
+    }
+
+    public static String calcStringAst(Block block, Node<KeyValue<Word, Token>> ast) throws VariableNotFoundException, InvalidTypeException {
+        String out = "";
+
+        for (int i = 0; i < ast.getChildren().size(); i++) {
+            Token type = ast.getChildren().get(i).getData().getValue();
+            String data = ast.getChildren().get(i).getData().getKey().value();
+
+            if(type == Token.LITERAL_STRING){
+                out += data.substring(1, data.length() - 1);
+            } else if(type == Token.IDENTIFIER){
+                Variable var = block.getVariable(data);
+                if(var == null){
+                    throw new VariableNotFoundException(data);
+                }
+
+                if(var.getType() != Token.TYPE_STRING){
+                    throw new InvalidTypeException(var, ast.getChildren().get(i).getData().getKey().line(), Token.TYPE_STRING);
+                }
+
+                out += (String) var.getValue();
+            }
+
+        }
+
+        return out;
+    }
+
+    @Deprecated
     public String combineStrings(Program program, LinkedList<KeyValue<Word, Token>> wordTokens) throws InvalidTypeException, VariableNotFoundException {
         String s = "";
         for (KeyValue<Word, Token> wordToken : wordTokens) {
@@ -282,7 +460,7 @@ public class Parser {
         LinkedList<Instruction> printInstr = new LinkedList<>();
         printInstr.add(new PrintInstruction(program, -1));
 
-        Function printFunc = new Function("print", printAttr, printInstr);
+        Function printFunc = new Function(program,"print", Token.VOID, printAttr, printInstr);
         program.addFunction(printFunc);
 
         //PRINTLN
@@ -292,7 +470,7 @@ public class Parser {
         LinkedList<Instruction> printlnInstr = new LinkedList<>();
         printlnInstr.add(new PrintlnInstruction(program, -1));
 
-        Function printlnFunc = new Function("println", printlnAttr, printlnInstr);
+        Function printlnFunc = new Function(program, "println", Token.VOID, printlnAttr, printlnInstr);
         program.addFunction(printlnFunc);
 
         //DUMP
@@ -300,9 +478,9 @@ public class Parser {
         dumpAttr.put("type", Token.TYPE_STRING);
 
         LinkedList<Instruction> dumpInstr = new LinkedList<>();
-        dumpInstr.add(new DumpInstruction(program, -1));
+        dumpInstr.add(new DumpInstruction(program, program, -1));
 
-        Function dumpFunc = new Function("dump", dumpAttr, dumpInstr);
+        Function dumpFunc = new Function(program, "dump", Token.VOID, dumpAttr, dumpInstr);
         program.addFunction(dumpFunc);
     }
 

@@ -2,22 +2,17 @@ package de.oliver.javapp.compiler.parser.instructions;
 
 import de.oliver.javapp.compiler.parser.*;
 import de.oliver.javapp.exceptions.*;
-import de.oliver.javapp.utils.KeyValue;
-import de.oliver.javapp.utils.Token;
-
-import java.util.HashMap;
 import java.util.List;
-import java.util.stream.Collectors;
 
-public class CallFunctionInstruction extends Instruction implements ParameterInstruction {
+public class CallFunctionInstruction extends Instruction {
 
     private final String functionName;
     private final List<Variable> parametersVars;
 
     private Function function;
 
-    public CallFunctionInstruction(Program program, int line, String functionName, List<Variable> parametersVars) {
-        super(program, line);
+    public CallFunctionInstruction(Block parentBlock, Block block, int line, String functionName, List<Variable> parametersVars) {
+        super(parentBlock, block, line);
         this.functionName = functionName;
         this.parametersVars = parametersVars;
         function = null;
@@ -25,13 +20,19 @@ public class CallFunctionInstruction extends Instruction implements ParameterIns
 
     @Override
     public void execute() throws InvalidArgumentLengthException, VariableNotFoundException, FunctionNotFoundException, VariableAlreadyExistsException, InvalidTypeException {
-        this.function = program.getFunction(functionName);
+        if(block instanceof Program pgr) {
+            this.function = pgr.getFunction(functionName);
+        } else {
+            for (Block parentBlock : block.getAllParentBlocks()) {
+                if (parentBlock instanceof Program pgr) {
+                    this.function = pgr.getFunction(functionName);
+                }
+            }
+        }
 
         if(this.function == null){
             throw new FunctionNotFoundException(functionName);
         }
-
-        HashMap<String, Variable> params = new HashMap<>();
 
         int attributeSize = function.getAttributes().keySet().size();
         int parameterSize = parametersVars.size();
@@ -40,21 +41,11 @@ public class CallFunctionInstruction extends Instruction implements ParameterIns
             throw new InvalidArgumentLengthException(attributeSize, parameterSize);
         }
 
-        for (int i = 0; i < attributeSize; i++) {
-            Variable p = parametersVars.get(i);
-            KeyValue<String, Token> a = new KeyValue<>(function.getAttributes().entrySet().stream().toList().get(0).getKey(), function.getAttributes().entrySet().stream().toList().get(0).getValue());
-            if(a.getValue() != Token.TYPE_OBJECT && p.getType() != a.getValue()){
-                throw new InvalidTypeException(p, line, a.getValue());
-            }
-            params.put(function.getAttributes().keySet().stream().toList().get(i), p);
+        if(function.getName().equals("dump")){
+            function.getInstructions().get(0).setBlock(block);
         }
 
-        execute(params);
-    }
-
-    @Override
-    public void execute(HashMap<String, Variable> parameters) throws InvalidArgumentLengthException, VariableNotFoundException, FunctionNotFoundException, VariableAlreadyExistsException, InvalidTypeException {
-        function.run(parameters);
+        function.run(parametersVars);
     }
 
     public String getFunctionName() {
