@@ -105,6 +105,9 @@ public class Parser {
                                 break;
                             }
                         }
+                        if(instr.getFunction().getVariable(varName) != null){
+                            dataType = instr.getFunction().getVariable(varName).getType();
+                        }
                     }
                 } else {
                     Variable var = program.getVariable(varName);
@@ -128,6 +131,7 @@ public class Parser {
                 //TODO: make strings to ast too
                 if(dataType == Token.TYPE_STRING){
                     ast = stringAst(subWordTokens);
+                    ast.print("");
                 } else {
                     ast = astOfCalculation(subWordTokens);
                 }
@@ -387,22 +391,22 @@ public class Parser {
 
     public Node<KeyValue<Word, Token>> stringAst(LinkedList<KeyValue<Word, Token>> wordTokens){
         Node<KeyValue<Word, Token>> ast = new Node<>(new KeyValue<>(new Word(-1, -1, ""), Token.LITERAL_STRING));
-        for (int i = 0; i < wordTokens.size(); i++) {
-            ast.addChild(new Node<>(wordTokens.get(i)));
+        for (KeyValue<Word, Token> wordToken : wordTokens) {
+            ast.addChild(new Node<>(wordToken));
         }
 
         return ast;
     }
 
     public static String calcStringAst(Block block, Node<KeyValue<Word, Token>> ast) throws VariableNotFoundException, InvalidTypeException {
-        String out = "";
+        StringBuilder out = new StringBuilder();
 
         for (int i = 0; i < ast.getChildren().size(); i++) {
             Token type = ast.getChildren().get(i).getData().getValue();
             String data = ast.getChildren().get(i).getData().getKey().value();
-
             if(type == Token.LITERAL_STRING){
-                out += data.substring(1, data.length() - 1);
+                data = data.substring(1, data.length() - 1);
+                out.append(data);
             } else if(type == Token.IDENTIFIER){
                 Variable var = block.getVariable(data);
                 if(var == null){
@@ -413,12 +417,16 @@ public class Parser {
                     throw new InvalidTypeException(var, ast.getChildren().get(i).getData().getKey().line(), Token.TYPE_STRING);
                 }
 
-                out += (String) var.getValue();
+                String val = (String) var.getValue();
+                if(val.startsWith("\"") && val.endsWith("\"")) {
+                    val = val.substring(1, val.length() - 1);
+                }
+                out.append(val);
             }
 
         }
 
-        return out;
+        return out.toString();
     }
 
     @Deprecated
