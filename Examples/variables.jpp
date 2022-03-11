@@ -1,0 +1,16 @@
+// Declare variables like this
+//	<type> <identifier> = <value>
+int a = 42
+
+// Assign variables like this
+//	<identifier> = <value>
+a = 50
+
+// The basic data types are:
+//	long
+// 	int
+//	double
+//	float
+//	string
+//	char
+//	boolean

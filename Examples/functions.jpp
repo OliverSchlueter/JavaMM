@@ -1,0 +1,18 @@
+// Call functions like this
+// <identifier> ( <parameter 1> , <parameter 2> , ... )
+println ( "Hello World!" )
+
+// Define new functions like this
+// def <return type> <identifier> ( <attribute 1> , <attribute 2> ... ) {
+// 	<code ...>
+// }
+
+def void v ( int x , int y ) {
+	
+	println ( x )
+}
+
+// There are three default functions
+//	print ( object message )	: prints the message to the standard output		
+//	println ( object message )	: prints the message with a linebreak
+//	dump ( string type )		: dumps out the current variables or functions

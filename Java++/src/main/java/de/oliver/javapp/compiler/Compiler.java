@@ -36,7 +36,6 @@ public class Compiler {
         String line = null;
         int lineIndex = 0;
 
-        lineLoop:
         while(true) {
             try { line = br.readLine(); } catch (IOException ignored) { }
             lineIndex++;
