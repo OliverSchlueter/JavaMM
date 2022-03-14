@@ -99,7 +99,8 @@ public abstract class Block {
         System.out.println("| <TYPE> <NAME> = <VALUE>");
         System.out.println("| ");
         for (Variable variable : variables.values()) {
-            System.out.println("| " + variable.getType() + " " + variable.getName() + " = " + variable.getValue().toString());
+            Object val = variable.getValue();
+            System.out.println("| " + variable.getType() + " " + variable.getName() + " = " + (val == null ? "null" : val));
         }
         System.out.println("--------------------------");
     }

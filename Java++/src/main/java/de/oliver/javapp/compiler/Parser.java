@@ -371,13 +371,13 @@ public class Parser {
         KeyValue<Word, Token> leftChild = node.getChildren().get(0).getData();
         KeyValue<Word, Token> rightChild = node.getChildren().get(1).getData();
 
-        double leftD = Token.literals().contains(leftChild.getValue())
-                ? Double.parseDouble(leftChild.getKey().value())
-                : (double) block.getVariable(leftChild.getKey().value()).getValue();
+            double leftD = Token.literals().contains(leftChild.getValue())
+                    ? Double.parseDouble(leftChild.getKey().value())
+                    : Double.parseDouble(block.getVariable(leftChild.getKey().value()).getValue().toString());
 
-        double rightD = Token.literals().contains(rightChild.getValue())
-                ? Double.parseDouble(rightChild.getKey().value())
-                : (double) block.getVariable(rightChild.getKey().value()).getValue();
+            double rightD = Token.literals().contains(rightChild.getValue())
+                    ? Double.parseDouble(rightChild.getKey().value())
+                    : Double.parseDouble(block.getVariable(rightChild.getKey().value()).getValue().toString());
 
         switch (node.getData().getValue()){
             case PLUS -> out += leftD + rightD;
