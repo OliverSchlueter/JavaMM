@@ -18,3 +18,7 @@ You can see some examples in the Examples folder
 - Save the file as .jpp
 - Run the jar with needed options in console
 - (Hopefully) the program runs 
+
+
+## Bugs
+If you found bugs / unexpected features then please let me know or fix them by yourself (I like github).
