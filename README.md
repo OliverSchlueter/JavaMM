@@ -1,5 +1,5 @@
 # Java++
-Java++ is a programming language based on Java
+Java++ is a personal project. I called it Java++, because I (obviously) like Java and I also like the reason why C++ is called C++ but actually if I think again, maybe I should have named it Java--. Once I have a good day, will rename the project. //TODO: rename project
 
 ## Rules
 - Space between Operations
