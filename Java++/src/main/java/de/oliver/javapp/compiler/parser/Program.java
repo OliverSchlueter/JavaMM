@@ -48,7 +48,7 @@ public class Program extends Block{
                 }
                 attr = attr.substring(0, attr.length() - 2);
             }
-            System.out.println("| void " + name + " (" + attr + ")"); // TODO: add return value if implemented
+            System.out.println("| " + function.getReturnType() + " " + name + " (" + attr + ")");
         }
         System.out.println("--------------------------");
     }
