@@ -93,8 +93,9 @@ public abstract class Block {
     }
 
     public void dumpVariables(){
+        String className = this.getClass().getSimpleName();
         System.out.println("--------------------------");
-        System.out.println("| Variables in " + this.getClass().getSimpleName());
+        System.out.println("| Variables in " + className + (className.equals("Function") ? ": '" + ((Function) this).getName() + "'" : ""));
         System.out.println("| ");
         System.out.println("| <TYPE> <NAME> = <VALUE>");
         System.out.println("| ");

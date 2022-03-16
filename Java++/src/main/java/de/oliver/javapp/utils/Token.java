@@ -31,6 +31,11 @@ public enum Token {
     TYPE_CHARACTER("char"),
     TYPE_BOOLEAN("boolean"),
 
+    /**
+     * Do not use, only for error reporting
+     */
+    TYPE_NUMBER("\0"),
+
     // Arithmetic operators
     PLUS("+"),
     MINUS("-"),

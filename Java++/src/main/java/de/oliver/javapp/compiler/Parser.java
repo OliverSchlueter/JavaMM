@@ -66,7 +66,6 @@ public class Parser {
 
                 Node<KeyValue<Word, Token>> ast;
 
-                // TODO: add support for strings
                 if(type == Token.TYPE_STRING){
                     ast = stringAst(subWordTokens);
                 } else {
@@ -128,7 +127,6 @@ public class Parser {
 
                 Node<KeyValue<Word, Token>> ast;
 
-                //TODO: make strings to ast too
                 if(dataType == Token.TYPE_STRING){
                     ast = stringAst(subWordTokens);
                     ast.print("");
@@ -144,6 +142,49 @@ public class Parser {
                     }
                 }
 
+            }
+
+            // ++, --
+            else if(tokens.get(0).getValue() == Token.IDENTIFIER
+                    && (tokens.get(1).getValue() == Token.PLUS_PLUS || tokens.get(1).getValue() == Token.MINUS_MINUS)){
+                String varName = tokens.get(0).getKey().value();
+
+                Token dataType = null;
+                if(openBlocks.size() > 0){
+                    if(openBlocks.get(0) instanceof DefineFunctionInstruction instr){
+                        for (Block parent : instr.getFunction().getAllParentBlocks()) {
+                            Variable var = parent.getVariable(varName);
+                            if(var != null){
+                                dataType = var.getType();
+                                break;
+                            }
+                        }
+                        if(instr.getFunction().getVariable(varName) != null){
+                            dataType = instr.getFunction().getVariable(varName).getType();
+                        }
+                    }
+                } else {
+                    Variable var = program.getVariable(varName);
+                    if(var != null){
+                        dataType = var.getType();
+                    }
+
+                }
+
+                if(dataType == null){
+                    throw new VariableNotFoundException(varName);
+                }
+
+                if(tokens.get(1).getValue() == Token.MINUS_MINUS) {
+                    instruction = new DecrementInstruction(program, program, line, varName, dataType);
+                } else {
+                    instruction = new IncrementInstruction(program, program, line, varName, dataType);
+                }
+                if(openBlocks.size() > 0) {
+                    if(openBlocks.get(0) instanceof DefineFunctionInstruction instr){
+                        instruction.setBlock(instr.getFunction());
+                    }
+                }
             }
 
             // Call function
@@ -413,11 +454,7 @@ public class Parser {
                     throw new VariableNotFoundException(data);
                 }
 
-                if(var.getType() != Token.TYPE_STRING){
-                    throw new InvalidTypeException(var, ast.getChildren().get(i).getData().getKey().line(), Token.TYPE_STRING);
-                }
-
-                String val = (String) var.getValue();
+                String val = var.getValue().toString();
                 if(val.startsWith("\"") && val.endsWith("\"")) {
                     val = val.substring(1, val.length() - 1);
                 }
@@ -508,5 +545,36 @@ public class Parser {
         }
 
         return null;
+    }
+
+    public static Token getTypeOfObject(Object obj){
+        Token type = null;
+
+        switch (obj.getClass().getSimpleName().toLowerCase(Locale.ROOT)){
+            case "boolean" -> { type = Token.TYPE_BOOLEAN; }
+            case "character" -> { type = Token.TYPE_CHARACTER; }
+            case "string" -> { type = Token.TYPE_STRING; }
+            case "integer" -> { type = Token.TYPE_INTEGER; }
+            case "long" -> { type = Token.TYPE_LONG; }
+            case "float" -> { type = Token.TYPE_FLOAT; }
+            case "double" -> { type = Token.TYPE_DOUBLE; }
+            default -> { type = Token.TYPE_OBJECT; }
+        }
+
+        return type;
+    }
+
+    public static Object castToType(Object obj, Token type){
+        switch (type) {
+            case TYPE_BOOLEAN -> { return Boolean.parseBoolean(obj.toString()); }
+            case TYPE_STRING -> { return obj.toString(); }
+            case TYPE_CHARACTER -> { return obj.toString().toCharArray()[0]; }
+            case TYPE_INTEGER -> { return Integer.parseInt(obj.toString()); }
+            case TYPE_LONG -> { return Long.parseLong(obj.toString()); }
+            case TYPE_FLOAT -> { return Float.parseFloat(obj.toString()); }
+            case TYPE_DOUBLE -> { return Double.parseDouble(obj.toString()); }
+        }
+
+        return obj;
     }
 }

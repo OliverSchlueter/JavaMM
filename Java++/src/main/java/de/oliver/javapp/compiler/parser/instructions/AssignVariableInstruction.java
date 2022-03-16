@@ -47,6 +47,8 @@ public class AssignVariableInstruction extends Instruction {
             default -> value = Parser.calculateAst(block, ast);
         }
 
+        value = Parser.castToType(value, var.getType());
+
         var.setValue(value);
     }
 

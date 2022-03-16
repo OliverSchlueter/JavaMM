@@ -32,10 +32,14 @@ public class DeclareVariableInstruction extends Instruction {
         switch (type){
             case TYPE_STRING -> value = Parser.calcStringAst(block, ast);
             case TYPE_DOUBLE -> value = Parser.calculateAst(block, ast);
+            case TYPE_FLOAT -> value = (float) Parser.calculateAst(block, ast);
+            case TYPE_LONG -> value = (long) Parser.calculateAst(block, ast);
             case TYPE_INTEGER -> value = (int) Parser.calculateAst(block, ast);
             // TODO: add all other datatypes
             default -> value = Parser.calculateAst(block, ast);
         }
+
+        value = Parser.castToType(value, type);
 
         Variable var = new Variable(identifier.value(), type, value);
 

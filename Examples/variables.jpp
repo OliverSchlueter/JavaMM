@@ -14,3 +14,7 @@ a = 50
 //	string
 //	char
 //	boolean
+
+// The short way to increment / decrement a number is:
+a ++
+a --

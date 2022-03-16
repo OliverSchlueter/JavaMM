@@ -9,8 +9,6 @@ import java.util.*;
 
 public class Function extends Block {
 
-    //TODO: add return value for function
-
     private final String name;
     private final Token returnType;
     private Object returnValue;
