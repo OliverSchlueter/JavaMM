@@ -19,7 +19,7 @@ public class CallFunctionInstruction extends Instruction {
     }
 
     @Override
-    public void execute() throws InvalidArgumentLengthException, VariableNotFoundException, FunctionNotFoundException, VariableAlreadyExistsException, InvalidTypeException {
+    public void execute() throws InvalidArgumentLengthException, VariableNotFoundException, FunctionNotFoundException, VariableAlreadyExistsException, InvalidTypeException, NoReturnException {
         if(block instanceof Program pgr) {
             this.function = pgr.getFunction(functionName);
         } else {

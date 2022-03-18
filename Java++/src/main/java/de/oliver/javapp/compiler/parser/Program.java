@@ -25,7 +25,7 @@ public class Program extends Block{
     /**
      * run the entire program
      */
-    public void run(List<Variable> parameters) throws InvalidArgumentLengthException, VariableNotFoundException, FunctionNotFoundException, VariableAlreadyExistsException, InvalidTypeException {
+    public void run(List<Variable> parameters) throws InvalidArgumentLengthException, VariableNotFoundException, FunctionNotFoundException, VariableAlreadyExistsException, InvalidTypeException, NoReturnException {
         Logger.logger.log(Program.class, LogLevel.INFO, "Running program now");
         for (int i = 0; i < instructions.size(); i++) {
             instructions.get(i).execute();

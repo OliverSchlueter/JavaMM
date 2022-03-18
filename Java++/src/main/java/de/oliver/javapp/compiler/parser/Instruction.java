@@ -15,7 +15,7 @@ public abstract class Instruction {
         this.line = line;
     }
 
-    public abstract void execute() throws VariableNotFoundException, InvalidArgumentLengthException, FunctionNotFoundException, VariableAlreadyExistsException, InvalidTypeException;
+    public abstract void execute() throws VariableNotFoundException, InvalidArgumentLengthException, FunctionNotFoundException, VariableAlreadyExistsException, InvalidTypeException, NoReturnException;
 
     public int getLine() {
         return line;

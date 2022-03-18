@@ -41,11 +41,11 @@ public enum Token {
     MINUS("-"),
     STAR("*"), // multiply,
     SLASH("/"), // divide
-    DOUBLE_STAR("**"), // exponentiation TODO: not implement
-    DOUBLE_SLASH("//"), // floor divide TODO: not implement
-    PERCENTAGE("%"), // modulo TODO: not implement
-    PLUS_PLUS("++"), // increment TODO: not implement
-    MINUS_MINUS("--"), // decrement TODO: not implement
+    DOUBLE_STAR("**"), // exponentiation TODO: not implemented
+    DOUBLE_SLASH("//"), // floor divide TODO: not implemented
+    PERCENTAGE("%"), // modulo
+    PLUS_PLUS("++"),
+    MINUS_MINUS("--"),
 
     OPEN_PARENTHESIS("("),
     CLOSE_PARENTHESIS(")"),
@@ -53,15 +53,19 @@ public enum Token {
     CLOSE_BRACES("}"),
     COMMA(","),
 
-    //Assignment operators
+    // Assignment operators
     EQUALS("="),
-    PLUS_EQUALS("+="), // TODO: not implement
-    MINUS_EQUALS("-="), // TODO: not implement
-    STAR_EQUALS("*="), // TODO: not implement
-    SLASH_EQUALS("/="), // TODO: not implement
+    PLUS_EQUALS("+="), // TODO: not implemented
+    MINUS_EQUALS("-="), // TODO: not implemented
+    STAR_EQUALS("*="), // TODO: not implemented
+    SLASH_EQUALS("/="), // TODO: not implemented
 
+    // Comparison Operators
+    DOUBLE_EQUAL("=="), // TODO: not implemented
+    DOUBLE_AND("&&"), // TODO: not implemented
+    DOUBLE_VERTICAL_BAR("||"), // TODO: not implemented
+    EXCLAMATION_MARK("!"), // TODO: not implemented
 
-    // TODO: add Comparison Operators
     ;
 
 
@@ -87,7 +91,7 @@ public enum Token {
     }
 
     public static List<Token> arithmeticOperators(){
-        return Arrays.asList(PLUS, MINUS, STAR, SLASH);
+        return Arrays.asList(PLUS, MINUS, STAR, SLASH, DOUBLE_STAR, DOUBLE_SLASH, PERCENTAGE);
     }
 
     public static List<Token> literals() {

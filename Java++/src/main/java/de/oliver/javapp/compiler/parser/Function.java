@@ -55,7 +55,7 @@ public class Function extends Block {
      * @param parameters key: attribute name
      *                   value: variable
      */
-    public void run(List<Variable> parameters) throws InvalidArgumentLengthException, VariableNotFoundException, FunctionNotFoundException, VariableAlreadyExistsException, InvalidTypeException {
+    public void run(List<Variable> parameters) throws InvalidArgumentLengthException, VariableNotFoundException, FunctionNotFoundException, VariableAlreadyExistsException, InvalidTypeException, NoReturnException {
         returnValue = null;
 
         int attrIndex = 0;
@@ -65,7 +65,10 @@ public class Function extends Block {
 
             Variable var = variables.get(attrName);
             Variable p = parameters.get(attrIndex);
-            // TODO: check if p var type = attrType
+
+            if(p.getType() != Token.TYPE_OBJECT && var.getType() != Token.TYPE_OBJECT && p.getType() != attrType){
+                throw new InvalidTypeException(p, -1, var.getType());
+            }
             var.setValue(p.getValue());
 
             attrIndex++;
@@ -81,8 +84,6 @@ public class Function extends Block {
                     }
                     returnValue = Parser.calculateAst(returnInstruction.getBlock(), returnInstruction.getAst());
                     break;
-                } else {
-                    // TODO: return value is already set somehow
                 }
             }
 
@@ -94,7 +95,7 @@ public class Function extends Block {
         }
 
         if(returnType != Token.VOID && returnValue == null){
-            // TODO: no return for function
+            throw new NoReturnException(this);
         }
     }
 

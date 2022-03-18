@@ -21,7 +21,7 @@ public class Parser {
         this.tokens = tokens;
     }
 
-    public Program generateProgram() throws VariableNotFoundException, InvalidArgumentLengthException, FunctionNotFoundException, VariableAlreadyExistsException, InvalidTypeException {
+    public Program generateProgram() throws VariableNotFoundException, InvalidArgumentLengthException, FunctionNotFoundException, VariableAlreadyExistsException, InvalidTypeException, InvalidOperatorException, NoReturnException, FunctionInFunctionException {
         Program program = new Program();
 
         addDefaultFunctions(program);
@@ -39,9 +39,7 @@ public class Parser {
             if(tokens.get(0).getValue() == Token.CLOSE_BRACES){
                 if(openBlocks.size() > 0){
                     DefineBlockInstruction instr = openBlocks.get(0);
-                    //program.addInstruction(instr);
                     instr.execute();
-                    //program.addInstruction(instr);
                     openBlocks.remove();
                     continue;
                 }
@@ -53,7 +51,6 @@ public class Parser {
                     && tokens.get(2).getValue() == Token.EQUALS
                     && tokens.size() >= 4){
 
-                // TODO: type checking
                 Token type = tokens.get(0).getValue();
                 Word identifier = tokens.get(1).getKey();
 
@@ -75,15 +72,10 @@ public class Parser {
 
                 instruction = new DeclareVariableInstruction(program, program, line, identifier, type, ast);
                 if(openBlocks.size() == 0) {
-                    //instruction.execute();
-                    //program.getDeclaredVariables().put(identifier.value(), type);
                     program.addDeclaredVariable(identifier.value(), type);
                 } else {
                     if(openBlocks.get(0) instanceof DefineFunctionInstruction instr){
                         instruction.setBlock(instr.getFunction());
-                        //instr.getFunction().getDeclaredVariables().put(identifier.value(), type);
-                        //instruction.execute();
-                        //continue;
                         instr.getFunction().addDeclaredVariable(identifier.value(), type);
                     }
                 }
@@ -192,14 +184,13 @@ public class Parser {
                     && tokens.get(1).getValue() == Token.OPEN_PARENTHESIS
                     && tokens.get(tokens.size()-1).getValue() == Token.CLOSE_PARENTHESIS){
 
-                //TODO: more more checks
                 String functionName = tokens.get(0).getKey().value();
                 List<Variable> parameters = new ArrayList<>();
 
                 for (int i = 2; i < tokens.size(); i++) {
                     Word word = tokens.get(i).getKey();
                     Token token = tokens.get(i).getValue();
-                    // TODO: do calculating if needed here
+                    // TODO: do calculating in parameter
                     // for now it just accepts just one variable or literal
                     if (token == Token.IDENTIFIER){
                         Variable var = null;
@@ -220,7 +211,7 @@ public class Parser {
 
                         parameters.add(var);
                     } else if(Token.literals().contains(token)){
-                        Variable var = new Variable(null, Token.getTypeOfLiteral(token), word.value()); //TODO: find correct type for literal
+                        Variable var = new Variable(null, Token.getTypeOfLiteral(token), word.value());
                         parameters.add(var);
                     }
                 }
@@ -260,7 +251,7 @@ public class Parser {
 
                 for (DefineBlockInstruction openBlock : openBlocks) {
                     if(openBlock instanceof DefineFunctionInstruction){
-                        return null; //TODO: can not define a function in a function
+                        throw new FunctionInFunctionException();
                     }
                 }
 
@@ -278,7 +269,6 @@ public class Parser {
 
                 Node<KeyValue<Word, Token>> ast;
 
-                //TODO: make strings to ast too
                 ast = astOfCalculation(subWordTokens);
 
                 instruction = new ReturnInstruction(program, program, line, ast);
@@ -306,7 +296,7 @@ public class Parser {
     }
 
 
-    public Node<KeyValue<Word, Token>> astOfCalculation(LinkedList<KeyValue<Word, Token>> wordTokens){
+    public Node<KeyValue<Word, Token>> astOfCalculation(LinkedList<KeyValue<Word, Token>> wordTokens) throws InvalidOperatorException {
         Node<KeyValue<Word, Token>> root = null;
 
         if(wordTokens.size() == 1){
@@ -315,7 +305,6 @@ public class Parser {
         }
 
         // TODO: only support for numbers at the moment
-        // TODO: do type checking
 
         if(wordTokens.size() == 3){
             if(Token.arithmeticOperators().contains(wordTokens.get(1).getValue())){
@@ -324,8 +313,7 @@ public class Parser {
                 KeyValue<Word, Token> right = wordTokens.get(2);
 
                 if(!Token.arithmeticOperators().contains(operator.getValue())){
-                    // TODO: invalid operator
-                    return null;
+                    throw new InvalidOperatorException(operator.getValue());
                 }
 
                 root = new Node<>(operator, Arrays.asList(
@@ -406,7 +394,7 @@ public class Parser {
         }
     }
 
-    // TODO: currently only supports + - * /
+    // TODO: currently only supports + - * / %
     public static double calcOfOperatorNode(Block block, Node<KeyValue<Word, Token>> node){
         double out = 0;
         KeyValue<Word, Token> leftChild = node.getChildren().get(0).getData();
@@ -425,6 +413,9 @@ public class Parser {
             case MINUS -> out += leftD - rightD;
             case STAR -> out += leftD * rightD;
             case SLASH -> out += leftD / rightD;
+            case PERCENTAGE -> out += leftD % rightD;
+            case DOUBLE_STAR -> out += Math.pow(leftD, rightD);
+            case DOUBLE_SLASH -> out += Math.floor(leftD / rightD);
         }
 
         return out;

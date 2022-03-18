@@ -18,3 +18,11 @@ a = 50
 // The short way to increment / decrement a number is:
 a ++
 a --
+
+// Arithmetic operators
+// '+' plus
+// '-' minus
+// '*' multiply
+// '/' divide
+// '**' exponentiation
+// '//' floor divide

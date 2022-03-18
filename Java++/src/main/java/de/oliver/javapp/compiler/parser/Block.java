@@ -19,7 +19,7 @@ public abstract class Block {
         this.variables = variables;
     }
 
-    public abstract void run(List<Variable> parameters) throws InvalidArgumentLengthException, VariableNotFoundException, FunctionNotFoundException, VariableAlreadyExistsException, InvalidTypeException;
+    public abstract void run(List<Variable> parameters) throws InvalidArgumentLengthException, VariableNotFoundException, FunctionNotFoundException, VariableAlreadyExistsException, InvalidTypeException, NoReturnException;
 
     /**
      * @return all instructions

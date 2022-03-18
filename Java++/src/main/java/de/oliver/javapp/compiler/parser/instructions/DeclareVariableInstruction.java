@@ -35,7 +35,6 @@ public class DeclareVariableInstruction extends Instruction {
             case TYPE_FLOAT -> value = (float) Parser.calculateAst(block, ast);
             case TYPE_LONG -> value = (long) Parser.calculateAst(block, ast);
             case TYPE_INTEGER -> value = (int) Parser.calculateAst(block, ast);
-            // TODO: add all other datatypes
             default -> value = Parser.calculateAst(block, ast);
         }
 
@@ -47,7 +46,6 @@ public class DeclareVariableInstruction extends Instruction {
             throw new VariableAlreadyExistsException(identifier.value());
         }
 
-        // TODO: check if actual value is matching type
         if(block.getVariable(identifier.value()) != null){
             block.getVariable(identifier.value()).setValue(var.getValue());
         } else {
