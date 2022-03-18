@@ -1,5 +1,5 @@
-# Java++
-Java++ is a personal project. I called it Java++, because I (obviously) like Java and I also like the reason why C++ is called C++ but actually if I think again, maybe I should have named it Java--. Once I have a good day, will rename the project. //TODO: rename project
+# Java--
+Java-- is a personal project. I called it Java--, because I (obviously) like Java and I also like the reason why C++ is called C++ but actually my compiler is bad so I called it Java--.
 
 You can see some examples in the Examples folder
 
@@ -15,7 +15,7 @@ You can see some examples in the Examples folder
 - Clone the repo
 - Build the jar with maven
 - Write some Java++ code
-- Save the file as .jpp
+- Save the file as *.jmm
 - Run the jar with needed options in console
 - (Hopefully) the program runs 
 
