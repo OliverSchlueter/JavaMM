@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report-3.0.xsd" version="3.0" name="de.oliver.logger.LoggerTest" time="0.016" tests="2" errors="0" skipped="0" failures="0">
+<testsuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report-3.0.xsd" version="3.0" name="de.oliver.javamm.compiler.TestExamples" time="0.289" tests="1" errors="0" skipped="0" failures="0">
   <properties>
     <property name="java.specification.version" value="17"/>
     <property name="sun.cpu.isalist" value="amd64"/>
@@ -57,11 +57,63 @@
     <property name="sun.io.unicode.encoding" value="UnicodeLittle"/>
     <property name="java.class.version" value="61.0"/>
   </properties>
-  <testcase name="log" classname="de.oliver.logger.LoggerTest" time="0">
-    <system-out><![CDATA[[2022-3-18 9:15:15] [LoggerTest] [INFO]: Hello, world!
-[2022-3-18 9:15:15] [INFO]: Hello, world!
-[2022-3-18 9:15:15] [INFO]: Hello, world!
+  <testcase name="test" classname="de.oliver.javamm.compiler.TestExamples" time="0.259">
+    <system-out><![CDATA[[2022-3-18 9:15:15] [Compiler] [INFO]: Reading src took 10ms
+[2022-3-18 9:15:15] [Compiler] [INFO]: Tokenizing took 16ms
+----- 3 -----
+[3:1]: println : IDENTIFIER
+[3:9]: ( : OPEN_PARENTHESIS
+[3:24]: "Hello World!" : LITERAL_STRING
+[3:26]: ) : CLOSE_PARENTHESIS
+----- 10 -----
+[10:1]: def : DEF
+[10:5]: void : VOID
+[10:10]: v : IDENTIFIER
+[10:12]: ( : OPEN_PARENTHESIS
+[10:14]: int : TYPE_INTEGER
+[10:18]: x : IDENTIFIER
+[10:20]: , : COMMA
+[10:22]: int : TYPE_INTEGER
+[10:26]: y : IDENTIFIER
+[10:28]: ) : CLOSE_PARENTHESIS
+[10:30]: { : OPEN_BRACES
+----- 11 -----
+[11:1]: println : IDENTIFIER
+[11:9]: ( : OPEN_PARENTHESIS
+[11:11]: x : IDENTIFIER
+[11:13]: ) : CLOSE_PARENTHESIS
+----- 12 -----
+[12:1]: } : CLOSE_BRACES
+[2022-3-18 9:15:15] [Compiler] [INFO]: Parsing took 100ms
+[2022-3-18 9:15:15] [Compiler] [INFO]: Generating simulation took 142ms
+
+[2022-3-18 9:15:15] [Program] [INFO]: Running program now
+Hello World!
+[2022-3-18 9:15:15] [Program] [INFO]: Finished program now
+[2022-3-18 9:15:15] [Compiler] [INFO]: Reading src took 0ms
+[2022-3-18 9:15:15] [Compiler] [INFO]: Tokenizing took 0ms
+----- 3 -----
+[3:1]: int : TYPE_INTEGER
+[3:5]: a : IDENTIFIER
+[3:7]: = : EQUALS
+[3:9]: 42 : LITERAL_INTEGER
+----- 19 -----
+[19:1]: a : IDENTIFIER
+[19:3]: ++ : PLUS_PLUS
+----- 20 -----
+[20:1]: a : IDENTIFIER
+[20:3]: -- : MINUS_MINUS
+----- 7 -----
+[7:1]: a : IDENTIFIER
+[7:3]: = : EQUALS
+[7:5]: 50 : LITERAL_INTEGER
+KeyValue{key=Word[line=3, column=9, value=42], value=LITERAL_INTEGER}
+KeyValue{key=Word[line=7, column=5, value=50], value=LITERAL_INTEGER}
+[2022-3-18 9:15:15] [Compiler] [INFO]: Parsing took 32ms
+[2022-3-18 9:15:15] [Compiler] [INFO]: Generating simulation took 32ms
+
+[2022-3-18 9:15:15] [Program] [INFO]: Running program now
+[2022-3-18 9:15:15] [Program] [INFO]: Finished program now
 ]]></system-out>
   </testcase>
-  <testcase name="log2" classname="de.oliver.logger.LoggerTest" time="0.016"/>
 </testsuite>

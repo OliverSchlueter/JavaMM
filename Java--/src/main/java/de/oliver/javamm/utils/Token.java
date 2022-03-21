@@ -41,8 +41,8 @@ public enum Token {
     MINUS("-"),
     STAR("*"), // multiply,
     SLASH("/"), // divide
-    DOUBLE_STAR("**"), // exponentiation TODO: not implemented
-    DOUBLE_SLASH("//"), // floor divide TODO: not implemented
+    DOUBLE_STAR("**"), // exponentiation
+    DOUBLE_SLASH("//"), // floor divide
     PERCENTAGE("%"), // modulo
     PLUS_PLUS("++"),
     MINUS_MINUS("--"),
