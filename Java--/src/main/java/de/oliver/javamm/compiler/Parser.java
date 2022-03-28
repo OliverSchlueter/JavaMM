@@ -420,6 +420,28 @@ public class Parser {
         return out;
     }
 
+    public Node<KeyValue<Word, Token>> astOfCondition(LinkedList<KeyValue<Word, Token>> wordTokens){
+        Node<KeyValue<Word, Token>> root = null;
+
+        if(wordTokens.size() == 1){
+            root = new Node<>(wordTokens.get(0));
+            return root;
+        }
+
+        for (int i = 0; i < wordTokens.size(); i++) {
+            if(wordTokens.get(i).getValue() == Token.DOUBLE_EQUAL){
+                KeyValue<Word, Token> left = wordTokens.get(i-1);
+                KeyValue<Word, Token> right = wordTokens.get(i+1);
+                Node<KeyValue<Word, Token>> equ = new Node<>(new KeyValue<>(new Word(-1, -1, ""), Token.DOUBLE_EQUAL));
+                equ.addChild(new Node<>(left));
+                equ.addChild(new Node<>(right));
+                //TODO: add equ to root
+            }
+        }
+
+        return root;
+    }
+
     public Node<KeyValue<Word, Token>> stringAst(LinkedList<KeyValue<Word, Token>> wordTokens){
         Node<KeyValue<Word, Token>> ast = new Node<>(new KeyValue<>(new Word(-1, -1, ""), Token.LITERAL_STRING));
         for (KeyValue<Word, Token> wordToken : wordTokens) {
