@@ -67,7 +67,7 @@ public class Parser {
                 } else {
                     ast = astOfCalculation(subWordTokens);
                 }
-                ast.print("");
+                //ast.print("");
 
                 instruction = new DeclareVariableInstruction(program, program, line, identifier, type, ast);
                 if(openBlocks.size() == 0) {
@@ -120,11 +120,11 @@ public class Parser {
 
                 if(dataType == Token.TYPE_STRING){
                     ast = stringAst(subWordTokens);
-                    ast.print("");
+                    //ast.print("");
                 } else {
                     ast = astOfCalculation(subWordTokens);
                 }
-                ast.print("");
+                //ast.print("");
 
                 instruction = new AssignVariableInstruction(program, program, line, varName, ast, dataType);
                 if(openBlocks.size() > 0) {
@@ -530,6 +530,14 @@ public class Parser {
 
         Function inputFunc = new Function(program, "input", Token.VOID, inputAttr, inputInstr);
         program.addFunction(inputFunc);
+
+        //CLEAR CONSOLE
+        HashMap<String, Token> clearConsoleAttr = new HashMap<>();
+
+        LinkedList<Instruction> clearConsoleInstr = new LinkedList<>();
+        clearConsoleInstr.add(new ClearConsoleInstruction(program, program, -1));
+        Function clearConsoleFunc = new Function(program, "clearConsole", Token.VOID, clearConsoleAttr, clearConsoleInstr);
+        program.addFunction(clearConsoleFunc);
     }
 
     public Map<Integer, LinkedList<KeyValue<Word, Token>>> getTokens() {

@@ -140,7 +140,7 @@ public class Compiler {
         Logger.logger.log(Compiler.class, LogLevel.INFO, "Tokenizing took " + timeTokenize + "ms");
         long startTimeParsing = System.currentTimeMillis();
 
-        tokenizer.printTokens();
+        //tokenizer.printTokens();
 
         Parser parser = new Parser(tokens);
         Program program;

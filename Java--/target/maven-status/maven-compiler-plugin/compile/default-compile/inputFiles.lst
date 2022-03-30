@@ -13,6 +13,7 @@ C:\Users\Oliver\Desktop\JavaMM\Java--\src\main\java\de\oliver\javamm\compiler\To
 C:\Users\Oliver\Desktop\JavaMM\Java--\src\main\java\de\oliver\javamm\compiler\parser\instructions\DumpInstruction.java
 C:\Users\Oliver\Desktop\JavaMM\Java--\src\main\java\de\oliver\javamm\compiler\parser\instructions\CallFunctionInstruction.java
 C:\Users\Oliver\Desktop\JavaMM\Java--\src\main\java\de\oliver\javamm\compiler\parser\instructions\PrintlnInstruction.java
+C:\Users\Oliver\Desktop\JavaMM\Java--\src\main\java\de\oliver\javamm\compiler\parser\instructions\ClearConsoleInstruction.java
 C:\Users\Oliver\Desktop\JavaMM\Java--\src\main\java\de\oliver\javamm\compiler\parser\instructions\IncrementInstruction.java
 C:\Users\Oliver\Desktop\JavaMM\Java--\src\main\java\de\oliver\javamm\compiler\parser\instructions\PrintInstruction.java
 C:\Users\Oliver\Desktop\JavaMM\Java--\src\main\java\de\oliver\javamm\compiler\parser\instructions\DecrementInstruction.java
