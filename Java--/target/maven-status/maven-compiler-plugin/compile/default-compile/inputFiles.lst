@@ -26,6 +26,7 @@ C:\Users\Oliver\Desktop\JavaMM\Java--\src\main\java\de\oliver\javamm\exceptions\
 C:\Users\Oliver\Desktop\JavaMM\Java--\src\main\java\de\oliver\javamm\utils\Token.java
 C:\Users\Oliver\Desktop\JavaMM\Java--\src\main\java\de\oliver\javamm\compiler\Parser.java
 C:\Users\Oliver\Desktop\JavaMM\Java--\src\main\java\de\oliver\javamm\compiler\parser\Program.java
+C:\Users\Oliver\Desktop\JavaMM\Java--\src\main\java\de\oliver\javamm\compiler\parser\instructions\InputInstruction.java
 C:\Users\Oliver\Desktop\JavaMM\Java--\src\main\java\de\oliver\javamm\compiler\parser\Function.java
 C:\Users\Oliver\Desktop\JavaMM\Java--\src\main\java\de\oliver\javamm\exceptions\InvalidTypeException.java
 C:\Users\Oliver\Desktop\JavaMM\Java--\src\main\java\de\oliver\javamm\utils\Word.java

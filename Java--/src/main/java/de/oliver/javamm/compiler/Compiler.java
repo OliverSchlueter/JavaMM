@@ -81,12 +81,14 @@ public class Compiler {
 
                 if (c == ' ') {
                     String word = "";
+                    boolean currentWordIsString = false;
                     boolean isString = false;
 
                     for (int j = i + 1; j < chars.length; j++) {
 
                         if(!isString && chars[j] == '"'){
                             isString = true;
+                            currentWordIsString = true;
                         } else if(isString && chars[j] == '"'){
                             isString = false;
                         }
@@ -102,6 +104,9 @@ public class Compiler {
                     }
 
                     if (!word.equals("")) {
+                        if(currentWordIsString){
+                            word = word.replace("\\n", "\n");
+                        }
                         addWordToLine(lineIndex, new Word(lineIndex, i + 2, word));
                     }
                 }

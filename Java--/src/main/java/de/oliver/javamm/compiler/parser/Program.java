@@ -1,6 +1,5 @@
 package de.oliver.javamm.compiler.parser;
 
-
 import de.oliver.javamm.exceptions.*;
 import de.oliver.javamm.utils.Token;
 import de.oliver.logger.LogLevel;
