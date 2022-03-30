@@ -18,6 +18,10 @@ public class PrintlnInstruction extends Instruction implements ParameterInstruct
     @Override
     public void execute(List<Variable> parameters) {
         Variable messageVar = parameters.get(0);
+        if(messageVar.getValue() == null){
+            System.out.println("null");
+            return;
+        }
         String message = messageVar.getValue().toString().startsWith("\"") && messageVar.getValue().toString().endsWith("\"")
                 ? messageVar.getValue().toString().substring(1, messageVar.getValue().toString().length() - 1)
                 : messageVar.getValue().toString();

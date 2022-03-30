@@ -517,6 +517,19 @@ public class Parser {
 
         Function dumpFunc = new Function(program, "dump", Token.VOID, dumpAttr, dumpInstr);
         program.addFunction(dumpFunc);
+
+        // INPUT
+        HashMap<String, Token> inputAttr = new HashMap<>();
+        inputAttr.put("type", Token.TYPE_STRING);
+
+        LinkedList<Instruction> inputInstr = new LinkedList<>();
+        program.addDeclaredVariable("$USER_INPUT", Token.TYPE_STRING);
+        inputInstr.add(new InputInstruction(program, program, -1, "$USER_INPUT"));
+        // TODO: add return instr for user input
+        // at the moment it sets the variable "$USER_INPUT" to the user input
+
+        Function inputFunc = new Function(program, "input", Token.VOID, inputAttr, inputInstr);
+        program.addFunction(inputFunc);
     }
 
     public Map<Integer, LinkedList<KeyValue<Word, Token>>> getTokens() {

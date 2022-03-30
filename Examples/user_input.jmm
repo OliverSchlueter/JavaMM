@@ -1,0 +1,8 @@
+// You can get input from the user via the console like this:
+// input ( <question you want to ask the user> )
+// Example:
+input ( "What is your name? " )
+string name = "Your name is: " $USER_INPUT
+println ( name )
+
+// Everytime input function is called, it will override the $USER_INPUT variable
