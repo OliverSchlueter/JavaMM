@@ -22,3 +22,9 @@ You can see some examples in the Examples folder
 
 ## Bugs
 If you found bugs / unexpected features then please let me know or fix them by yourself (I like github).
+
+## TODOs
+- [x] Variables (declaring, assigning , calculating)
+- [x] Functions (declaring, parameters, return values)
+- [ ] Conditions (if, else if, else)
+- [ ] Loops ((arrays), while, for, foreach)
