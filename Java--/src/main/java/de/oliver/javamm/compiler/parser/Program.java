@@ -1,5 +1,7 @@
 package de.oliver.javamm.compiler.parser;
 
+import de.oliver.javamm.compiler.parser.instructions.CallFunctionInstruction;
+import de.oliver.javamm.compiler.parser.instructions.ExitInstruction;
 import de.oliver.javamm.exceptions.*;
 import de.oliver.javamm.utils.Token;
 import de.oliver.logger.LogLevel;
@@ -10,15 +12,18 @@ import java.util.*;
 public class Program extends Block{
 
     private final HashMap<String, Function> functions; // TODO: add support for same name but different attributes
+    private boolean running;
 
     public Program(LinkedList<Instruction> instructions, HashMap<String, Variable> variables, HashMap<String, Function> functions) {
         super(null, instructions, variables);
         this.functions = functions;
+        this.running = false;
     }
 
     public Program(){
         super(null, new LinkedList<>(), new HashMap<>());
         this.functions = new HashMap<>();
+        this.running = false;
     }
 
     /**
@@ -26,10 +31,26 @@ public class Program extends Block{
      */
     public void run(List<Variable> parameters) throws InvalidArgumentLengthException, VariableNotFoundException, FunctionNotFoundException, VariableAlreadyExistsException, InvalidTypeException, NoReturnException {
         Logger.logger.log(Program.class, LogLevel.INFO, "Running program now");
+        this.running = true;
         for (int i = 0; i < instructions.size(); i++) {
-            instructions.get(i).execute();
+            if(!running){
+                break;
+            }
+            Instruction instr = instructions.get(i);
+            if(instr instanceof CallFunctionInstruction callFunctionInstruction){
+                if(callFunctionInstruction.getFunctionName().equals("exit")) {
+                    running = false;
+                    break;
+                }
+            }
+            instr.execute();
         }
+        this.running = false;
         Logger.logger.log(Program.class, LogLevel.INFO, "Finished program now");
+    }
+
+    public void stopProgram(){
+        this.running = false;
     }
 
     public void dumpFunctions(){

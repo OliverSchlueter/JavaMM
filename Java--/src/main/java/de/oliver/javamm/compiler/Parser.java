@@ -538,6 +538,12 @@ public class Parser {
         clearConsoleInstr.add(new ClearConsoleInstruction(program, program, -1));
         Function clearConsoleFunc = new Function(program, "clearConsole", Token.VOID, clearConsoleAttr, clearConsoleInstr);
         program.addFunction(clearConsoleFunc);
+
+        //EXIT
+        LinkedList<Instruction> exitInstr = new LinkedList<>();
+        exitInstr.add(new ExitInstruction(program, program, -1));
+        Function exitFunc = new Function(program, "exit", Token.VOID, new HashMap<>(), exitInstr);
+        program.addFunction(exitFunc);
     }
 
     public Map<Integer, LinkedList<KeyValue<Word, Token>>> getTokens() {

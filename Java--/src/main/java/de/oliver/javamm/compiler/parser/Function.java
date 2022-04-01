@@ -1,6 +1,7 @@
 package de.oliver.javamm.compiler.parser;
 
 import de.oliver.javamm.compiler.Parser;
+import de.oliver.javamm.compiler.parser.instructions.CallFunctionInstruction;
 import de.oliver.javamm.compiler.parser.instructions.ReturnInstruction;
 import de.oliver.javamm.exceptions.*;
 import de.oliver.javamm.utils.Token;
@@ -76,6 +77,13 @@ public class Function extends Block {
 
         for (int i = 0; i < instructions.size(); i++) {
             Instruction instruction = instructions.get(i);
+
+            if(instruction instanceof CallFunctionInstruction callFunctionInstruction){
+                if(callFunctionInstruction.getFunctionName().equals("exit")){
+                    callFunctionInstruction.execute();
+                    break;
+                }
+            }
 
             if(instruction instanceof ReturnInstruction returnInstruction){
                 if(returnValue == null){
