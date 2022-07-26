@@ -2,6 +2,7 @@ package de.oliver.javamm.compiler.parser;
 
 import de.oliver.javamm.compiler.parser.instructions.CallFunctionInstruction;
 import de.oliver.javamm.compiler.parser.instructions.ExitInstruction;
+import de.oliver.javamm.compiler.parser.instructions.GotoInstruction;
 import de.oliver.javamm.exceptions.*;
 import de.oliver.javamm.utils.Token;
 import de.oliver.logger.LogLevel;
@@ -14,14 +15,14 @@ public class Program extends Block{
     private final HashMap<String, Function> functions; // TODO: add support for same name but different attributes
     private boolean running;
 
-    public Program(LinkedList<Instruction> instructions, HashMap<String, Variable> variables, HashMap<String, Function> functions) {
-        super(null, instructions, variables);
+    public Program(LinkedList<Instruction> instructions, HashMap<String, Variable> variables, HashMap<String, Function> functions, HashMap<String, Integer> bookmarks) {
+        super(null, instructions, variables, bookmarks);
         this.functions = functions;
         this.running = false;
     }
 
     public Program(){
-        super(null, new LinkedList<>(), new HashMap<>());
+        super(null, new LinkedList<>(), new HashMap<>(), new HashMap<>());
         this.functions = new HashMap<>();
         this.running = false;
     }
@@ -29,19 +30,42 @@ public class Program extends Block{
     /**
      * run the entire program
      */
-    public void run(List<Variable> parameters) throws InvalidArgumentLengthException, VariableNotFoundException, FunctionNotFoundException, VariableAlreadyExistsException, InvalidTypeException, NoReturnException {
+    public void run(List<Variable> parameters) throws InvalidArgumentLengthException, VariableNotFoundException, FunctionNotFoundException, VariableAlreadyExistsException, InvalidTypeException, NoReturnException, BookmarkAlreadyExistsException, NotImplementedException {
         Logger.logger.log(Program.class, LogLevel.INFO, "Running program now");
         this.running = true;
+        int jumpToNextBookmark = -1;
+
         for (int i = 0; i < instructions.size(); i++) {
             if(!running){
                 break;
             }
+
             Instruction instr = instructions.get(i);
+
+            // look if I need to skip to next bookmark
+            if(jumpToNextBookmark != -1 && instr.getLine() < jumpToNextBookmark){
+                continue;
+            } else {
+                jumpToNextBookmark = -1;
+            }
+
             if(instr instanceof CallFunctionInstruction callFunctionInstruction){
                 if(callFunctionInstruction.getFunctionName().equals("exit")) {
                     running = false;
                     break;
                 }
+            } else if(instr instanceof GotoInstruction gotoInstruction){
+                gotoInstruction.execute();
+                int bLine = gotoInstruction.getBookmarkLine();
+
+                if(instr.getLine() < bLine){ // need to skip some instructions
+                    jumpToNextBookmark = bLine;
+                } else { // need to go back
+                    //TODO: jump back with bookmarks
+                    throw new NotImplementedException("Going back with bookmarks is not implemented yet");
+                }
+
+                continue;
             }
             instr.execute();
         }

@@ -66,6 +66,10 @@ public enum Token {
     DOUBLE_VERTICAL_BAR("||"), // TODO: not implemented
     EXCLAMATION_MARK("!"), // TODO: not implemented
 
+    // Goto
+    POINT("."),
+    GOTO("goto"),
+
     ;
 
 

@@ -16,8 +16,8 @@ public class Function extends Block {
     private final HashMap<String, Token> attributes;
 
 
-    public Function(Program program, String name, Token returnType, HashMap<String, Variable> variables, HashMap<String, Token> attributes, LinkedList<Instruction> instructions) {
-        super(program, instructions, variables);
+    public Function(Program program, String name, Token returnType, HashMap<String, Variable> variables, HashMap<String, Token> attributes, LinkedList<Instruction> instructions, HashMap<String, Integer> bookmarks) {
+        super(program, instructions, variables, bookmarks);
         this.name = name;
         this.returnType = returnType;
         this.returnValue = null;
@@ -25,7 +25,7 @@ public class Function extends Block {
     }
 
     public Function(Program program, String name, Token returnType, HashMap<String, Token> attributes, LinkedList<Instruction> instructions) {
-        super(program, instructions, new HashMap<>());
+        super(program, instructions, new HashMap<>(), new HashMap<>());
         this.name = name;
         this.returnType = returnType;
         this.returnValue = null;
@@ -35,7 +35,7 @@ public class Function extends Block {
     }
 
     public Function(Program program, String name, Token returnType, HashMap<String, Token> attributes){
-        super(program, new LinkedList<>(), new HashMap<>());
+        super(program, new LinkedList<>(), new HashMap<>(), new HashMap<>());
         this.name = name;
         this.returnType = returnType;
         this.returnValue = null;
@@ -56,7 +56,7 @@ public class Function extends Block {
      * @param parameters key: attribute name
      *                   value: variable
      */
-    public void run(List<Variable> parameters) throws InvalidArgumentLengthException, VariableNotFoundException, FunctionNotFoundException, VariableAlreadyExistsException, InvalidTypeException, NoReturnException {
+    public void run(List<Variable> parameters) throws InvalidArgumentLengthException, VariableNotFoundException, FunctionNotFoundException, VariableAlreadyExistsException, InvalidTypeException, NoReturnException, BookmarkAlreadyExistsException {
         returnValue = null;
 
         int attrIndex = 0;

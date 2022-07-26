@@ -20,7 +20,7 @@ public class Parser {
         this.tokens = tokens;
     }
 
-    public Program generateProgram() throws VariableNotFoundException, InvalidArgumentLengthException, FunctionNotFoundException, VariableAlreadyExistsException, InvalidTypeException, InvalidOperatorException, NoReturnException, FunctionInFunctionException {
+    public Program generateProgram() throws VariableNotFoundException, InvalidArgumentLengthException, FunctionNotFoundException, VariableAlreadyExistsException, InvalidTypeException, InvalidOperatorException, NoReturnException, FunctionInFunctionException, BookmarkAlreadyExistsException {
         Program program = new Program();
 
         addDefaultFunctions(program);
@@ -277,6 +277,18 @@ public class Parser {
                         instruction.setBlock(instr.getFunction());
                     }
                 }
+            }
+
+            // Declare bookmark
+            else if(tokens.get(0).getValue() == Token.POINT && tokens.get(1).getValue() == Token.IDENTIFIER){
+                instruction = new DeclareBookmarkInstruction(program, program, line, tokens.get(1).getKey().value());
+                instruction.execute();
+                continue;
+            }
+
+            // GOTO
+            else if(tokens.get(0).getValue() == Token.GOTO && tokens.get(1).getValue() == Token.IDENTIFIER){
+                instruction = new GotoInstruction(program, program, line, tokens.get(1).getKey().value());
             }
 
 

@@ -1,5 +1,6 @@
 package de.oliver.javamm.compiler.parser;
 
+import de.oliver.javamm.compiler.parser.instructions.DeclareBookmarkInstruction;
 import de.oliver.javamm.exceptions.*;
 import de.oliver.javamm.utils.Token;
 
@@ -12,14 +13,16 @@ public abstract class Block {
     protected final Block parentBlock;
     protected final LinkedList<Instruction> instructions;
     protected final HashMap<String, Variable> variables;
+    protected final HashMap<String, Integer> bookmarks; // name of bookmark, index of instruction
 
-    public Block(Block parentBlock, LinkedList<Instruction> instructions, HashMap<String, Variable> variables) {
+    public Block(Block parentBlock, LinkedList<Instruction> instructions, HashMap<String, Variable> variables, HashMap<String, Integer> bookmarks) {
         this.parentBlock = parentBlock;
         this.instructions = instructions;
         this.variables = variables;
+        this.bookmarks = bookmarks;
     }
 
-    public abstract void run(List<Variable> parameters) throws InvalidArgumentLengthException, VariableNotFoundException, FunctionNotFoundException, VariableAlreadyExistsException, InvalidTypeException, NoReturnException;
+    public abstract void run(List<Variable> parameters) throws InvalidArgumentLengthException, VariableNotFoundException, FunctionNotFoundException, VariableAlreadyExistsException, InvalidTypeException, NoReturnException, BookmarkAlreadyExistsException, NotImplementedException;
 
     /**
      * @return all instructions
@@ -92,6 +95,18 @@ public abstract class Block {
         variables.put(name, new Variable(name, type, null));
     }
 
+    public HashMap<String, Integer> getBookmarks() {
+        return bookmarks;
+    }
+
+    public void addBookmark(String name, int line) throws BookmarkAlreadyExistsException {
+        if(bookmarks.containsKey(name)){
+            throw new BookmarkAlreadyExistsException(name);
+        }
+
+        bookmarks.put(name, line);
+    }
+
     public void dumpVariables(){
         String className = this.getClass().getSimpleName();
         System.out.println("--------------------------");
@@ -102,6 +117,20 @@ public abstract class Block {
         for (Variable variable : variables.values()) {
             Object val = variable.getValue();
             System.out.println("| " + variable.getType() + " " + variable.getName() + " = " + (val == null ? "null" : val));
+        }
+        System.out.println("--------------------------");
+    }
+
+    public void dumpBookmarks(){
+        String className = this.getClass().getSimpleName();
+        System.out.println("--------------------------");
+        System.out.println("| Bookmarks in " + className + (className.equals("Function") ? ": '" + ((Function) this).getName() + "'" : ""));
+        System.out.println("| ");
+        System.out.println("| <NAME> : <LINE>");
+        System.out.println("| ");
+        for (String bookmark : bookmarks.keySet()) {
+            Instruction instr = instructions.get(bookmarks.get(bookmark) - 1);
+            System.out.println("| " + bookmark + " : line " + instr.getLine());
         }
         System.out.println("--------------------------");
     }

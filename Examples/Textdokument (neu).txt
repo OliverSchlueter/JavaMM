@@ -1,0 +1,13 @@
+// With bookmarks you can jump around in your code
+// This will get interesting when conditions are implemented
+// Note that you can not jump back at the moment
+
+println ( "Hello World" )
+
+goto myBookmark
+
+println ( "This will be skipped" )
+
+. myBookmark
+
+println ( "My bookmark" )

@@ -27,7 +27,9 @@ public class DumpInstruction extends Instruction implements ParameterInstruction
             block.dumpVariables();
         } else if (type.equalsIgnoreCase("functions")){
             ((Program) block).dumpFunctions();
-        } else {
+        } else if (type.equalsIgnoreCase("bookmarks")){
+            ((Program) block).dumpBookmarks();
+        }else {
             System.out.println("Invalid input for dump function: '" + type + "'");
         }
     }

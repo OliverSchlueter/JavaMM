@@ -146,7 +146,7 @@ public class Compiler {
         Program program;
         try {
             program = parser.generateProgram();
-        } catch (VariableNotFoundException | InvalidArgumentLengthException | FunctionNotFoundException | VariableAlreadyExistsException | InvalidTypeException | InvalidOperatorException | NoReturnException | FunctionInFunctionException e){
+        } catch (VariableNotFoundException | InvalidArgumentLengthException | FunctionNotFoundException | VariableAlreadyExistsException | InvalidTypeException | InvalidOperatorException | NoReturnException | FunctionInFunctionException | BookmarkAlreadyExistsException e){
             Logger.logger.log(Compiler.class, LogLevel.ERROR, "Parsing failed.");
             e.printStackTrace();
             return;
@@ -159,7 +159,7 @@ public class Compiler {
 
         try {
             program.run(new LinkedList<>());
-        } catch (VariableNotFoundException | InvalidArgumentLengthException | FunctionNotFoundException | VariableAlreadyExistsException | InvalidTypeException | NoReturnException e){
+        } catch (VariableNotFoundException | InvalidArgumentLengthException | FunctionNotFoundException | VariableAlreadyExistsException | InvalidTypeException | NoReturnException | BookmarkAlreadyExistsException | NotImplementedException e){
             Logger.logger.log(Compiler.class, LogLevel.ERROR, "Executing failed.");
             e.printStackTrace();
             return;
