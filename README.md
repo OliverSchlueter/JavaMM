@@ -14,7 +14,7 @@ You can see some examples in the Examples folder
 ## Compile
 - Clone the repo
 - Build the jar with maven
-- Write some Java++ code
+- Write some Java-- code
 - Save the file as *.jmm
 - Run the jar with needed options in console
 - (Hopefully) the program runs 
